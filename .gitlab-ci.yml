@@ -17,14 +17,8 @@
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
 stages:
-  - setup
   - build
-
-setup:
-  stage: setup
-  image: node:14
-  script:
-    - npm install -g @vue/cli
+  - test
 
 build:
   stage: build

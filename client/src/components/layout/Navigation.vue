@@ -32,11 +32,16 @@
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-playlist-check"
-            title="Dodaj zamówienie"
-            to="/add-order"
+            title="Zamówienia"
+            to="/orders"
           ></v-list-item>
           <v-list-item prepend-icon="mdi-store" title="Magazyn" to="/store"></v-list-item>
           <v-list-item prepend-icon="mdi-forklift" title="Produkcja" to="/production"></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-table-plus"
+            title="Dodaj zamówienie"
+            to="/add-order"
+          ></v-list-item>
         </v-list>
         <template v-slot:append>
           <v-list-item prepend-icon="mdi-logout" title="Wyloguj" class="my-6"></v-list-item>

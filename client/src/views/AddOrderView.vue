@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue'
-
-let cost = 0;
-
 </script>
 
 <template>
@@ -13,7 +10,7 @@ let cost = 0;
       variant="outlined"
     >
       <h1 class="mb-4 text-center">
-        {{ cost }} PLN
+        0 PLN
       </h1>
     </v-card>
     <v-row>

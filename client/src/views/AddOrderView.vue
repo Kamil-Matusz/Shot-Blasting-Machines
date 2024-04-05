@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue'
+
+let cost = 0;
+
 </script>
 
 <template>
   <BasePage title="Dodaj zamówienie">
+    <v-card class="mb-5"
+      title="Koszt"
+      subtitle="Poniżej znajduje się przybliżona wartość zamówienia."
+      variant="outlined"
+    >
+      <h1 class="mb-4 text-center">
+        {{ cost }} PLN
+      </h1>
+    </v-card>
     <v-row>
       <v-col cols="12" lg="6">
         <v-card class="mb-5"
@@ -13,7 +25,7 @@ import BasePage from '@/components/pages/BasePage.vue'
         >
           <v-select
             class="ml-4 mr-4"
-            :items="['Śrutownica RB7', 'Śrutownica RB11']"
+            :items="['Śrutownica RB7 (12900 PLN)', 'Śrutownica RB11 (15500 PLN)']"
             label="Wybierz maszynę:"
           />
         </v-card>
@@ -25,16 +37,16 @@ import BasePage from '@/components/pages/BasePage.vue'
         >
           <v-checkbox class="ml-3"
             hide-details
-            label="Hak holowniczy"
+            label="Hak holowniczy (+ 500 PLN)"
             color="blue"
           />
           <v-checkbox class="ml-3"
-            label="System odsysania pyłów"
+            label="System odsysania pyłów (+ 3500 PLN)"
             color="blue"
             hide-details
           />
           <v-checkbox class="ml-3"
-            label="Dodatkowy zestaw kół"
+            label="Dodatkowy zestaw kół (+ 1000 PLN)"
             color="blue"
             hide-details
           />

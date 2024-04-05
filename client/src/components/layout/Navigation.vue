@@ -32,8 +32,8 @@
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-playlist-check"
-            title="Zamówienia"
-            to="/orders"
+            title="Dodaj zamówienie"
+            to="/add-order"
           ></v-list-item>
           <v-list-item prepend-icon="mdi-store" title="Magazyn" to="/store"></v-list-item>
           <v-list-item prepend-icon="mdi-forklift" title="Produkcja" to="/production"></v-list-item>

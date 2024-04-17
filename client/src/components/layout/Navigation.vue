@@ -40,7 +40,7 @@
           <v-list-item
             prepend-icon="mdi-table-plus"
             title="Dodaj zamówienie"
-            to="/add-order"
+            to="/orders/create"
           ></v-list-item>
         </v-list>
         <template v-slot:append>

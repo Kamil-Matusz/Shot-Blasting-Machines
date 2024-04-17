@@ -48,7 +48,7 @@ const router = createRouter({
       component: ConstructionsView
     },
     {
-      path: '/add-order',
+      path: '/orders/create',
       name: 'add-order',
       component: AddOrderView
     },

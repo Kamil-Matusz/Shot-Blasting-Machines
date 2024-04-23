@@ -22,4 +22,12 @@ public class Order {
 
     @Column(name="comments", nullable = false)
     public String comments;
+
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    public User user;
+
+    @ManyToOne
+    @JoinColumn(name="client_id", nullable=false)
+    public Client client;
 }

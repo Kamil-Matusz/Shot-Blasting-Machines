@@ -30,4 +30,8 @@ public class Order {
     @ManyToOne
     @JoinColumn(name="client_id", nullable=false)
     public Client client;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "machine_id", referencedColumnName = "id")
+    private Machine machine;
 }

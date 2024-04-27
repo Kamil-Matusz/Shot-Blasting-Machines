@@ -31,6 +31,10 @@ public class Order {
     @JoinColumn(name="client_id", nullable=false)
     public Client client;
 
+    @ManyToOne
+    @JoinColumn(name="state_id", nullable=false)
+    public OrderState state;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "machine_id", referencedColumnName = "id")
     private Machine machine;

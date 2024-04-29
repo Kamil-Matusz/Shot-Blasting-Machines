@@ -17,11 +17,23 @@ public class SeedersScript {
     @Autowired
     private RoleDataSeeder clientDataSeeder;
 
+    @Autowired
+    private MaterialDataSeeder materialDataSeeder;
+
+    @Autowired
+    private ModelDataSeeder modelDataSeeder;
+
+    @Autowired
+    private MachineDataSeeder machineDataSeeder;
+
     @PostConstruct
     @Transactional
     public void seedData() {
         roleDataSeeder.seedData();
         userDataSeeder.seedData();
+        materialDataSeeder.seedData();
+        modelDataSeeder.seedData();
         clientDataSeeder.seedData();
+        machineDataSeeder.seedData();
     }
 }

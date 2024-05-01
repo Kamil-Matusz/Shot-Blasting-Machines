@@ -15,7 +15,7 @@ public class SeedersScript {
     private RoleDataSeeder roleDataSeeder;
 
     @Autowired
-    private RoleDataSeeder clientDataSeeder;
+    private ClientDataSeeder clientDataSeeder;
 
     @Autowired
     private MaterialDataSeeder materialDataSeeder;

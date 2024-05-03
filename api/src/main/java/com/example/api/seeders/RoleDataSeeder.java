@@ -1,22 +1,22 @@
 package com.example.api.seeders;
 
 import com.example.api.model.Role;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
-@Configuration
-public class RoleDataSeeder {
+@Component
+public class RoleDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostConstruct
+    @Override
     @Transactional
-    public void seedData() {
+    public void run(ApplicationArguments args) throws Exception {
         Role admin = new Role();
         admin.setName("Administrator Systemu");
         entityManager.persist(admin);
@@ -36,7 +36,5 @@ public class RoleDataSeeder {
         Role machineConstructor = new Role();
         machineConstructor.setName("Pracownik Produkcji");
         entityManager.persist(machineConstructor);
-
-
     }
 }

@@ -2,25 +2,27 @@ package com.example.api.seeders;
 
 import com.example.api.model.Role;
 import com.example.api.model.User;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
-public class UserDataSeeder {
+@Component
+@DependsOn("roleDataSeeder")
+public class UserDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostConstruct
+    @Override
     @Transactional
-    public void seedData() {
+    public void run(ApplicationArguments args) throws Exception {
         Session session = entityManager.unwrap(Session.class);
         List<Role> existingRoles = session.createQuery("FROM Role", Role.class).getResultList();
 
@@ -40,19 +42,19 @@ public class UserDataSeeder {
         seller.setRole(existingRoles.stream().filter(role -> role.getName().equals("Sprzedawca")).findFirst().orElse(null));
         users.add(seller);
 
-        User machineBulider = new User();
-        machineBulider.setName("Konrad Ryż");
-        machineBulider.setEmail("konradryz@test.com");
-        machineBulider.setPassword("password");
-        machineBulider.setRole(existingRoles.stream().filter(role -> role.getName().equals("Konstruktor Maszyn")).findFirst().orElse(null));
-        users.add(seller);
+        User machineBuilder = new User();
+        machineBuilder.setName("Konrad Ryż");
+        machineBuilder.setEmail("konradryz@test.com");
+        machineBuilder.setPassword("password");
+        machineBuilder.setRole(existingRoles.stream().filter(role -> role.getName().equals("Konstruktor Maszyn")).findFirst().orElse(null));
+        users.add(machineBuilder);
 
         User warehouseSupervisor = new User();
-        machineBulider.setName("Jan Papryka");
-        machineBulider.setEmail("janpapryka@test.com");
-        machineBulider.setPassword("password");
-        machineBulider.setRole(existingRoles.stream().filter(role -> role.getName().equals("Nadzorca Magazynu")).findFirst().orElse(null));
-        users.add(seller);
+        warehouseSupervisor.setName("Jan Papryka");
+        warehouseSupervisor.setEmail("janpapryka@test.com");
+        warehouseSupervisor.setPassword("password");
+        warehouseSupervisor.setRole(existingRoles.stream().filter(role -> role.getName().equals("Nadzorca Magazynu")).findFirst().orElse(null));
+        users.add(warehouseSupervisor);
 
         for (User user : users) {
             entityManager.persist(user);

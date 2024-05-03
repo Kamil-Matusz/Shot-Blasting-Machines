@@ -1,24 +1,27 @@
 package com.example.api.seeders;
 
 import com.example.api.model.Material;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
-public class MaterialDataSeeder {
+@Component
+@DependsOn({"clientDataSeeder"})
+public class MaterialDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostConstruct
+    @Override
     @Transactional
-    public void seedData() {
+    public void run(ApplicationArguments args) throws Exception {
         List<Material> materials = new ArrayList<>();
 
         Material perforatedSheet = new Material();
@@ -52,9 +55,9 @@ public class MaterialDataSeeder {
         materials.add(teflon1);
 
         Material teflon2 = new Material();
-        teflon1.setName("Śruby bez teflonu");
-        teflon1.setPrice(0.10);
-        teflon1.setAmount(5000);
+        teflon2.setName("Śruby bez teflonu");
+        teflon2.setPrice(0.10);
+        teflon2.setAmount(5000);
         materials.add(teflon2);
 
         Material fan = new Material();

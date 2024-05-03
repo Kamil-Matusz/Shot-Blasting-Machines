@@ -1,6 +1,7 @@
 package com.example.api.seeders;
 
-import com.example.api.model.Machine;
+import com.example.api.model.Accesory;
+import com.example.api.model.Model;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.boot.ApplicationArguments;
@@ -13,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@DependsOn({"roleDataSeeder", "userDataSeeder", "materialDataSeeder", "orderStateDataSeeder"})
-public class MachineDataSeeder implements ApplicationRunner {
+@DependsOn({"roleDataSeeder", "userDataSeeder", "materialDataSeeder", "orderStateDataSeeder", "modelDataSeeder"})
+public class AccesoriesDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -22,23 +23,16 @@ public class MachineDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        seedData();
-    }
 
-    private void seedData() {
-        List<Machine> machines = new ArrayList<>();
+        List<Accesory> accesories = new ArrayList<>();
 
-        Machine machine1 = new Machine();
-        machine1.setModel_id(1L);
-        machines.add(machine1);
+        Accesory accessory1 = new Accesory();
+        accessory1.setName("Zawieszka");
+        accessory1.setPrice(50.00);
+        entityManager.persist(accessory1);
 
-        Machine machine2 = new Machine();
-        machine2.setModel_id(2L);
-        machines.add(machine2);
-
-        for (Machine machine : machines) {
-            entityManager.persist(machine);
+        for (Accesory accesory : accesories) {
+            entityManager.persist(accesory);
         }
     }
 }
-

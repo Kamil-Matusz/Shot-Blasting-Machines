@@ -1,24 +1,27 @@
 package com.example.api.seeders;
 
 import com.example.api.model.Model;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
-public class ModelDataSeeder {
+@Component
+@DependsOn({"roleDataSeeder", "userDataSeeder", "materialDataSeeder", "orderStateDataSeeder"})
+public class ModelDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostConstruct
+    @Override
     @Transactional
-    public void seedData() {
+    public void run(ApplicationArguments args) throws Exception {
         List<Model> models = new ArrayList<>();
 
         Model model1 = new Model();
@@ -30,11 +33,18 @@ public class ModelDataSeeder {
         Model model2 = new Model();
         model2.setName("XL");
         model2.setPrice(10000.00);
-        model2.setComments("Model w wersji XL");
+        model2.setComments("Model w wersji XL z powiększonym koszem");
         models.add(model2);
+
+        Model model3 = new Model();
+        model3.setName("XXL");
+        model3.setPrice(10000.00);
+        model3.setComments("Model w wersji XXL z maksymalnym koszem");
+        models.add(model3);
 
         for (Model model : models) {
             entityManager.persist(model);
         }
     }
 }
+

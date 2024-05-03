@@ -1,23 +1,30 @@
 package com.example.api.seeders;
 
 import com.example.api.model.Client;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.context.annotation.Configuration;
+import org.hibernate.Session;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
-public class ClientDataSeeder {
+@Component
+@DependsOn("userDataSeeder")
+public class ClientDataSeeder implements ApplicationRunner {
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostConstruct
+    @Override
     @Transactional
-    public void seedData() {
+    public void run(ApplicationArguments args) throws Exception {
+        Session session = entityManager.unwrap(Session.class);
+
         List<Client> clients = new ArrayList<>();
 
         Client client1 = new Client();
@@ -25,17 +32,18 @@ public class ClientDataSeeder {
         client1.setEmail("jankowalski@example.com");
         client1.setPhoneNumber("+48123456789");
         client1.setAddress("Konopnickiej 1, Rzeszów, Polska");
-        clients.add(client1);
+        entityManager.persist(client1);
 
         Client client2 = new Client();
         client2.setName("Paweł Kowal");
-        client2.setEmail("pawełkowal@example.com");
+        client2.setEmail("pawelkowal@example.com");
         client2.setPhoneNumber("+48987654321");
-        client2.setAddress("Ciepłownicza 24, Rzeszów, Polska");
-        clients.add(client2);
+        client2.setAddress("Cieplownicza 24, Rzeszów, Polska");
+        entityManager.persist(client2);
 
         for (Client client : clients) {
             entityManager.persist(client);
         }
     }
 }
+

@@ -12,11 +12,11 @@ public class Model {
     private Long id;
 
     @Column(name="name", nullable = false)
-    public String name;
+    private String name;
 
     @Column(name="price", nullable = false)
-    public Double price;
+    private Double price;
 
     @Column(name="comments", nullable = false)
-    public String comments;
+    private String comments;
 }

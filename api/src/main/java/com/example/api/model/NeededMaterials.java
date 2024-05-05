@@ -20,5 +20,5 @@ public class NeededMaterials {
     private Material material;
 
     @Column(name="amount", nullable = false)
-    public Integer amount;
+    private Integer amount;
 }

@@ -16,8 +16,8 @@ public class OrderState {
     private Long id;
 
     @Column(name="name", nullable = false)
-    public String name;
+    private String name;
 
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
-    public List<Order> orders;
+    private List<Order> orders;
 }

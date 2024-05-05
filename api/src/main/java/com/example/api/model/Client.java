@@ -15,17 +15,17 @@ public class Client {
     private Long id;
 
     @Column(name="name", nullable = false)
-    public String name;
+    private String name;
 
     @Column(name="email", nullable = false)
-    public String email;
+    private String email;
 
     @Column(name="phone_number", nullable = false)
-    public String phoneNumber;
+    private String phoneNumber;
 
     @Column(name="address", nullable = false)
-    public String address;
+    private String address;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    public List<Order> orders;
+    private List<Order> orders;
 }

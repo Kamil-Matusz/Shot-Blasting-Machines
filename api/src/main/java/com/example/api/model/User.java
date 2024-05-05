@@ -15,18 +15,18 @@ public class User {
     private Long id;
 
     @Column(name="name", nullable = false)
-    public String name;
+    private String name;
 
     @Column(name="email", nullable = false)
-    public String email;
+    private String email;
 
     @Column(name="password", nullable = false)
-    public String password;
+    private String password;
 
     @ManyToOne
     @JoinColumn(name="role_id", nullable=false)
-    public Role role;
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    public List<Order> orders;
+    private List<Order> orders;
 }

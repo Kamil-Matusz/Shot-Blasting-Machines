@@ -35,11 +35,11 @@ public class MachineDataSeeder implements ApplicationRunner {
             List<Machine> machines = new ArrayList<>();
 
             Machine machine1 = new Machine();
-            machine1.setModel_id(models.stream().filter(model -> model.getName().equals("Standard")).findFirst().orElse(null).getId());
+            machine1.setModel(models.stream().filter(model -> model.getName().equals("Standard")).findFirst().orElse(null));
             machines.add(machine1);
 
             Machine machine2 = new Machine();
-            machine2.setModel_id(models.stream().filter(model -> model.getName().equals("XL")).findFirst().orElse(null).getId());
+            machine2.setModel(models.stream().filter(model -> model.getName().equals("XL")).findFirst().orElse(null));
             machines.add(machine2);
 
             for (Machine machine : machines) {

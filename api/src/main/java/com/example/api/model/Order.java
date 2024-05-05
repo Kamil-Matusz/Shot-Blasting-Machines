@@ -15,25 +15,25 @@ public class Order {
     private Long id;
 
     @Column(name="price", nullable = false)
-    public Double price;
+    private Double price;
 
     @Column(name="date", nullable = false)
-    public LocalDateTime date;
+    private LocalDateTime date;
 
     @Column(name="comments", nullable = false)
-    public String comments;
+    private String comments;
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
-    public User user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name="client_id", nullable=false)
-    public Client client;
+    private Client client;
 
     @ManyToOne
     @JoinColumn(name="state_id", nullable=false)
-    public OrderState state;
+    private OrderState state;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "machine_id", referencedColumnName = "id")

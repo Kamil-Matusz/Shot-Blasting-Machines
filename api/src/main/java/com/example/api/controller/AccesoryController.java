@@ -23,20 +23,13 @@ public class AccesoryController {
         this.accesoryRepository = accesoryRepository;
     }
 
-    private AccesoryDTO convertToDTO(Accesory accesory) {
-        AccesoryDTO accesoryDTO = new AccesoryDTO();
-        accesoryDTO.setId(accesory.getId());
-        accesoryDTO.setName(accesory.getName());
-        accesoryDTO.setPrice(accesory.getPrice());
-        return accesoryDTO;
-    }
 
     @GetMapping("")
     public ResponseEntity<List<AccesoryDTO>> getAllAccesories() {
         List<Accesory> accesories = accesoryRepository.findAll();
 
         List<AccesoryDTO> accesoryDTOS = accesories.stream()
-                .map(this::convertToDTO)
+                .map(AccesoryDTO::convertToDTO)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(accesoryDTOS, HttpStatus.OK);

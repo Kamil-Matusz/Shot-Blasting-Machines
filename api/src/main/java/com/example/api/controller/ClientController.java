@@ -23,21 +23,11 @@ public class ClientController {
         this.clientRepository = clientRepository;
     }
 
-    private ClientDTO convertToDTO(Client client) {
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(client.getId());
-        clientDTO.setName(client.getName());
-        clientDTO.setEmail(client.getEmail());
-        clientDTO.setAddress(client.getAddress());
-        clientDTO.setPhoneNumber(client.getPhoneNumber());
-        return clientDTO;
-    }
-
     @GetMapping("")
     public ResponseEntity<List<ClientDTO>> getAllClients() {
         List<Client> clients = clientRepository.findAll();
         List<ClientDTO> clientDTOs = clients.stream()
-                .map(this::convertToDTO)
+                .map(ClientDTO::convertToDTO)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(clientDTOs, HttpStatus.OK);
     }

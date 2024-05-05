@@ -11,11 +11,11 @@ public class Material {
     private Long id;
 
     @Column(name="name", nullable = false)
-    public String name;
+    private String name;
 
     @Column(name="price", nullable = false)
-    public Double price;
+    private Double price;
 
     @Column(name="amount", nullable = false)
-    public Integer amount;
+    private Integer amount;
 }

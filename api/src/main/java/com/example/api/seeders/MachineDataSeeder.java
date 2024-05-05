@@ -1,8 +1,10 @@
 package com.example.api.seeders;
 
 import com.example.api.model.Machine;
+import com.example.api.model.Model;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.hibernate.Session;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.DependsOn;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@DependsOn({"roleDataSeeder", "userDataSeeder", "materialDataSeeder", "orderStateDataSeeder"})
+@DependsOn({"roleDataSeeder", "userDataSeeder", "materialDataSeeder", "orderStateDataSeeder", "modelDataSeeder"})
 public class MachineDataSeeder implements ApplicationRunner {
 
     @PersistenceContext
@@ -26,15 +28,18 @@ public class MachineDataSeeder implements ApplicationRunner {
     }
 
     private void seedData() {
+        Session session = entityManager.unwrap(Session.class);
+        List<Model> models = session.createQuery("FROM Model ", Model.class).getResultList();
+
         if (modelsNotExists()) {
             List<Machine> machines = new ArrayList<>();
 
             Machine machine1 = new Machine();
-            machine1.setModel_id(1L);
+            machine1.setModel_id(models.stream().filter(model -> model.getName().equals("Standard")).findFirst().orElse(null).getId());
             machines.add(machine1);
 
             Machine machine2 = new Machine();
-            machine2.setModel_id(2L);
+            machine2.setModel_id(models.stream().filter(model -> model.getName().equals("XL")).findFirst().orElse(null).getId());
             machines.add(machine2);
 
             for (Machine machine : machines) {

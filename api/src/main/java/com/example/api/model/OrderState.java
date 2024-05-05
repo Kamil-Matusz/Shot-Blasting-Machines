@@ -18,6 +18,6 @@ public class OrderState {
     @Column(name="name", nullable = false)
     public String name;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
     public List<Order> orders;
 }

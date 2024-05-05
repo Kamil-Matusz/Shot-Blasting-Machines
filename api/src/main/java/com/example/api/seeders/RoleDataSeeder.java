@@ -17,24 +17,33 @@ public class RoleDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        Role admin = new Role();
-        admin.setName("Administrator Systemu");
-        entityManager.persist(admin);
+        if (modelsNotExists()) {
 
-        Role machineBuilder = new Role();
-        machineBuilder.setName("Konstruktor Maszyn");
-        entityManager.persist(machineBuilder);
+            Role admin = new Role();
+            admin.setName("Administrator Systemu");
+            entityManager.persist(admin);
 
-        Role warehouseSupervisor = new Role();
-        warehouseSupervisor.setName("Nadzorca Magazynu");
-        entityManager.persist(warehouseSupervisor);
+            Role machineBuilder = new Role();
+            machineBuilder.setName("Konstruktor Maszyn");
+            entityManager.persist(machineBuilder);
 
-        Role seller = new Role();
-        seller.setName("Sprzedawca");
-        entityManager.persist(seller);
+            Role warehouseSupervisor = new Role();
+            warehouseSupervisor.setName("Nadzorca Magazynu");
+            entityManager.persist(warehouseSupervisor);
 
-        Role machineConstructor = new Role();
-        machineConstructor.setName("Pracownik Produkcji");
-        entityManager.persist(machineConstructor);
+            Role seller = new Role();
+            seller.setName("Sprzedawca");
+            entityManager.persist(seller);
+
+            Role machineConstructor = new Role();
+            machineConstructor.setName("Pracownik Produkcji");
+            entityManager.persist(machineConstructor);
+        }
+    }
+
+    private boolean modelsNotExists() {
+        Long count = entityManager.createQuery("SELECT COUNT(r) FROM Role r", Long.class)
+                .getSingleResult();
+        return count == 0;
     }
 }

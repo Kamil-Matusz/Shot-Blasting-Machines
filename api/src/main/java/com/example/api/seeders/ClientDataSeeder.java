@@ -23,27 +23,35 @@ public class ClientDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        Session session = entityManager.unwrap(Session.class);
+        if (modelsNotExists()) {
+            Session session = entityManager.unwrap(Session.class);
 
-        List<Client> clients = new ArrayList<>();
+            List<Client> clients = new ArrayList<>();
 
-        Client client1 = new Client();
-        client1.setName("Jan Kowalski");
-        client1.setEmail("jankowalski@example.com");
-        client1.setPhoneNumber("+48123456789");
-        client1.setAddress("Konopnickiej 1, Rzeszów, Polska");
-        entityManager.persist(client1);
+            Client client1 = new Client();
+            client1.setName("Jan Kowalski");
+            client1.setEmail("jankowalski@example.com");
+            client1.setPhoneNumber("+48123456789");
+            client1.setAddress("Konopnickiej 1, Rzeszów, Polska");
+            entityManager.persist(client1);
 
-        Client client2 = new Client();
-        client2.setName("Paweł Kowal");
-        client2.setEmail("pawelkowal@example.com");
-        client2.setPhoneNumber("+48987654321");
-        client2.setAddress("Cieplownicza 24, Rzeszów, Polska");
-        entityManager.persist(client2);
+            Client client2 = new Client();
+            client2.setName("Paweł Kowal");
+            client2.setEmail("pawelkowal@example.com");
+            client2.setPhoneNumber("+48987654321");
+            client2.setAddress("Cieplownicza 24, Rzeszów, Polska");
+            entityManager.persist(client2);
 
-        for (Client client : clients) {
-            entityManager.persist(client);
+            for (Client client : clients) {
+                entityManager.persist(client);
+            }
         }
+    }
+
+    private boolean modelsNotExists() {
+        Long count = entityManager.createQuery("SELECT COUNT(c) FROM Client c", Long.class)
+                .getSingleResult();
+        return count == 0;
     }
 }
 

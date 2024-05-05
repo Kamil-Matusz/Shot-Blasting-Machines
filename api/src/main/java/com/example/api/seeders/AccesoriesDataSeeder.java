@@ -24,15 +24,22 @@ public class AccesoriesDataSeeder implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
 
-        List<Accesory> accesories = new ArrayList<>();
+        if (modelsNotExists()) {
+            List<Accesory> accesories = new ArrayList<>();
 
-        Accesory accessory1 = new Accesory();
-        accessory1.setName("Zawieszka");
-        accessory1.setPrice(50.00);
-        entityManager.persist(accessory1);
+            Accesory accessory1 = new Accesory();
+            accessory1.setName("Zawieszka");
+            accessory1.setPrice(50.00);
+            entityManager.persist(accessory1);
 
-        for (Accesory accesory : accesories) {
-            entityManager.persist(accesory);
+            for (Accesory accesory : accesories) {
+                entityManager.persist(accesory);
+            }
         }
+    }
+    private boolean modelsNotExists() {
+        Long count = entityManager.createQuery("SELECT COUNT(a) FROM Accesory a", Long.class)
+                .getSingleResult();
+        return count == 0;
     }
 }

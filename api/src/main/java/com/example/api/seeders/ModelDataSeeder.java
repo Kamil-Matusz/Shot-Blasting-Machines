@@ -22,29 +22,37 @@ public class ModelDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        List<Model> models = new ArrayList<>();
+        if (modelsNotExists()) {
+            List<Model> models = new ArrayList<>();
 
-        Model model1 = new Model();
-        model1.setName("Standard");
-        model1.setPrice(50000.00);
-        model1.setComments("Podstawowy model śrutownicy");
-        models.add(model1);
+            Model model1 = new Model();
+            model1.setName("Standard");
+            model1.setPrice(50000.00);
+            model1.setComments("Podstawowy model śrutownicy");
+            models.add(model1);
 
-        Model model2 = new Model();
-        model2.setName("XL");
-        model2.setPrice(10000.00);
-        model2.setComments("Model w wersji XL z powiększonym koszem");
-        models.add(model2);
+            Model model2 = new Model();
+            model2.setName("XL");
+            model2.setPrice(10000.00);
+            model2.setComments("Model w wersji XL z powiększonym koszem");
+            models.add(model2);
 
-        Model model3 = new Model();
-        model3.setName("XXL");
-        model3.setPrice(10000.00);
-        model3.setComments("Model w wersji XXL z maksymalnym koszem");
-        models.add(model3);
+            Model model3 = new Model();
+            model3.setName("XXL");
+            model3.setPrice(10000.00);
+            model3.setComments("Model w wersji XXL z maksymalnym koszem");
+            models.add(model3);
 
-        for (Model model : models) {
-            entityManager.persist(model);
+            for (Model model : models) {
+                entityManager.persist(model);
+            }
         }
+    }
+
+    private boolean modelsNotExists() {
+        Long count = entityManager.createQuery("SELECT COUNT(m) FROM Model m", Long.class)
+                .getSingleResult();
+        return count == 0;
     }
 }
 

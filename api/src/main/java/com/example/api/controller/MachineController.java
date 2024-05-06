@@ -23,9 +23,5 @@ public class MachineController {
         this.machineRepository = machineRepository;
     }
 
-    // TODO: Dodac tworzenie egzemplarza maszyny przed stworzeniem zamowienia
-    @PostMapping("")
-    public ResponseEntity<Machine> addMachine(@RequestBody Machine machine) {
-        return new ResponseEntity<>(machineRepository.save(machine), HttpStatus.CREATED);
-    }
+
 }

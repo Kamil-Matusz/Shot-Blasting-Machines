@@ -4,6 +4,7 @@ import com.example.api.model.Machine;
 import com.example.api.model.Model;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +19,14 @@ public class MachineDTO {
         machineDTO.setId(machine.getId());
         machineDTO.setModel(machine.getModel());
 
-        List<AccesoryDTO> accesoryDTOs = machine.getAccessories().stream()
-                .map(AccesoryDTO::convertToDTO)
-                .collect(Collectors.toList());
+        if (machine.getAccessories() != null) {
+            List<AccesoryDTO> accesoryDTOs = machine.getAccessories().stream()
+                    .map(AccesoryDTO::convertToDTO)
+                    .collect(Collectors.toList());
 
-        machineDTO.setAccessories(accesoryDTOs);
+            machineDTO.setAccessories(accesoryDTOs);
+        }
+        else machineDTO.setAccessories(new ArrayList<AccesoryDTO>());
 
         return machineDTO;
     }

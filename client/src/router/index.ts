@@ -5,12 +5,19 @@ import StoreView from '../views/StoreView.vue'
 import OrdersView from '../views/OrdersView.vue'
 import ProductionView from '../views/ProductionView.vue'
 import ConstructionsView from '../views/ConstructionsView.vue'
+import AddOrderView from '@/views/AddOrderView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'login',
+      component: LoginView
+    },
+    {
+      path: '/dashboard',
       name: 'home',
       alias: '/dashboard',
       component: DashboardView
@@ -36,15 +43,15 @@ const router = createRouter({
       component: OrdersView
     },
     {
-      path: '/orders',
-      name: 'ordes',
-      component: OrdersView
+      path: '/constructions',
+      name: 'constructions',
+      component: ConstructionsView
     },
     {
-      path: '/constructions',
-      name: 'ordes',
-      component: ConstructionsView
-    }
+      path: '/orders/create',
+      name: 'add-order',
+      component: AddOrderView
+    },
   ]
 })
 

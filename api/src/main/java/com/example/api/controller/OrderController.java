@@ -27,17 +27,20 @@ public class OrderController {
     private final MachineRepository machineRepository;
     private final OrderStateRepository orderStateRepository;
     private final UserRepository userRepository;
+    private final ModelRepository modelRepository;
+    private final AccesoryRepository accessoryRepository;
 
     @Autowired
-    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository) {
+    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccesoryRepository accessoryRepository) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
         this.machineRepository = machineRepository;
         this.orderStateRepository = orderStateRepository;
+        this.modelRepository = modelRepository;
+        this.accessoryRepository = accessoryRepository;
     }
 
-    // TODO: Rozwiazac problem z tym, ze maszyna ma juz istniec przed zapisem zamowienia
     @PostMapping("")
     public ResponseEntity<OrderDTO> addOrder(@RequestBody OrderSaveRequestDTO orderSaveRequestDTO) {
         Order order = new Order();
@@ -49,8 +52,17 @@ public class OrderController {
         order.setPrice(orderSaveRequestDTO.getPrice());
         order.setComments(orderSaveRequestDTO.getComments());
 
-        Machine machine = machineRepository.findById(orderSaveRequestDTO.getMachine()).orElseThrow(() -> new RuntimeException("Machine not found"));
-        order.setMachine(machine);
+        Model model = modelRepository.findById(orderSaveRequestDTO.getModel()).orElseThrow(() -> new RuntimeException("Model not found"));
+
+        Machine newMachine = new Machine();
+        newMachine.setModel(model);
+
+        var accesories = accessoryRepository.findAllById(orderSaveRequestDTO.getAccesories());
+        newMachine.setAccessories(accesories);
+
+        machineRepository.save(newMachine);
+
+        order.setMachine(newMachine);
 
         Client client = clientRepository.findById(orderSaveRequestDTO.getClient()).orElseThrow(() -> new RuntimeException("Client not found"));
         order.setClient(client);

@@ -47,11 +47,9 @@ export const useModelStore = defineStore("modelsStore", () => {
   }
 
   return {
-    materials,
-    dispatchCreateMaterial,
-    dispatchGetMaterials,
-    dispatchDeleteMaterial,
-    dispatchAddMaterialAmount,
-    dispatchTakeMaterial
+    models,
+    dispatchCreateModel,
+    dispatchGetModels,
+    dispatchDeleteModel
   };
 });

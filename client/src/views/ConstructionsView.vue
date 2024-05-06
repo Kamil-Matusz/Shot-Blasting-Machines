@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue'
 import type { VDataTable } from 'vuetify/components'
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import ModelForm from '@/components/models/ModelForm.vue';
 import EditModelForm from '@/components/models/EditModelForm.vue';
 import { useToast } from "vue-toastification";
@@ -26,27 +26,8 @@ const headers: ReadonlyHeaders = [
   { title: 'Akcje', key: 'actions', align: 'end' },
 ]
 
-//Temporary items to replace with data from store
-const items = ref([
-  {
-    id: 1,
-    name: "Standard",
-    price: 50000.00,
-    comments: "Podstawowy model śrutownicy"
-  },
-  {
-    id: 2,
-    name: "XL",
-    price: 10000.00,
-    comments: "Model w wersji XL z powiększonym koszem"
-  },
-  {
-    id: 3,
-    name: "XXL",
-    price: 10000.00,
-    comments: "Model w wersji XXL z maksymalnym koszem"
-  },
-]);
+const items = ref<Model[]>([]);
+console.log(items)
 
 //Temporary options to replace with real pagination data
 const options = ref({
@@ -79,6 +60,13 @@ const deleteModel = (id: number) => {
     timeout: 2000
   });
 }
+
+onMounted(async () => {
+  // Fetch models from the store
+  await modelStore.dispatchGetModels();
+  // Once data is fetched, assign it to the items ref
+  items.value = modelStore.models;
+});
 </script>
 
 <template>

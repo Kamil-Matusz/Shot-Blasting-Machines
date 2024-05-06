@@ -15,4 +15,3 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedHeaders("*"); // Allow all headers
     }
 }
-

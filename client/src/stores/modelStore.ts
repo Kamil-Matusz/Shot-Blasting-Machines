@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { API } from "../services";
 import { type Model, InputCreateModel } from '@/models/model';
 
-export const useModelStore = defineStore("modelsStore", () => {
+export const useModelStore = defineStore("modelStore", () => {
   const models = ref<Model[]>([]);
 
   //Store private functions that operates on local array to update it after api operations alternatily you can reload whole array with dispatchGetMaterials

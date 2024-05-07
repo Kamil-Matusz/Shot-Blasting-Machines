@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BaseCardWithHover from '../cards/BaseCardWithHover.vue';
+
 defineProps<{
   title: string
 }>()
@@ -6,10 +8,11 @@ defineProps<{
 
 <template>
   <div class="ml-14 h-screen pa-8 pb-12 d-flex flex-column">
-    <h2 class="text-h4 text-black my-4 text-center">{{ title }}</h2>
-    <v-card rounded="xl" class="pa-4 flex-grow hide-scrollbar" elevation="4" style="flex-grow: 1; overflow-y: scroll">
+    <h2 class="text-h4 text-white my-4 text-left">{{ title }}</h2>
+    <slot name="above-card"></slot>
+    <BaseCardWithHover style="height:100%">
       <slot></slot>
-    </v-card>
+    </BaseCardWithHover>
   </div>
 </template>
 

@@ -22,7 +22,7 @@ const headers: ReadonlyHeaders = [
   },
   { title: 'Nazwa', key: 'name', align: 'start' },
   { title: 'Cena', key: 'price', align: 'start' },
-  { title: 'Uwagi', key: 'comments', align: 'start'},
+  { title: 'Uwagi', key: 'comments', align: 'start' },
   { title: 'Akcje', key: 'actions', align: 'end' },
 ]
 
@@ -71,15 +71,18 @@ onMounted(async () => {
 
 <template>
   <BasePage title="Konstrukcja maszyn">
-    <!-- Add Model Dialog -->
-    <v-dialog v-model="addDialogVisible" max-width="500">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps" color="surface-variant" variant="flat">+Dodaj nowy model</v-btn>
-      </template>
-      <v-card title="Dodaj nowy model" rounded="lg">
-        <ModelForm :model-value="modelToAdd" @on-valid-submit="add(), addDialogVisible = false"></ModelForm>
-      </v-card>
-    </v-dialog>
+
+    <template #above-card>
+      <!-- Add Model Dialog -->
+      <v-dialog v-model="addDialogVisible" max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" color="primary" class="mb-4" style="max-width: 20rem;" variant="flat">+Dodaj nowy model</v-btn>
+        </template>
+        <v-card title="Dodaj nowy model" rounded="lg">
+          <ModelForm :model-value="modelToAdd" @on-valid-submit="add(), addDialogVisible = false"></ModelForm>
+        </v-card>
+      </v-dialog>
+    </template>
 
     <!-- Edit Model Dialog -->
     <v-dialog v-model="editDialogVisible" max-width="1000">
@@ -87,7 +90,8 @@ onMounted(async () => {
         <!-- This activator is optional, you can place it where it fits your UI -->
       </template>
       <v-card title="Edytuj model" rounded="lg">
-        <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel" @on-close="editDialogVisible = false"></EditModelForm>
+        <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel"
+          @on-close="editDialogVisible = false"></EditModelForm>
       </v-card>
     </v-dialog>
 

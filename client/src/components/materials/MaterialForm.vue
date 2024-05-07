@@ -9,7 +9,6 @@ const material = defineModel<InputCreateMaterial>({ required: true });
 const validator = useVuelidate(materialRules, material);
 
 const submit = async () => {
-    console.log('submit')
     validator.value.$touch()
     const result = await validator.value.$validate();
     if(result) {
@@ -29,7 +28,7 @@ const submit = async () => {
         <validated-text-field :validation-prop="validator.price" :is-number="true" label="Cena" class="mb-2"></validated-text-field>
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" text="Dodaj" color="surface-variant" variant="flat"></v-btn>
+            <v-btn type="submit" text="Dodaj" color="primary" variant="flat"></v-btn>
         </v-card-actions>
     </v-form>
 </template>

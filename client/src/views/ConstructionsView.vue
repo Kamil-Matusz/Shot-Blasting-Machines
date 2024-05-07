@@ -77,7 +77,7 @@ onMounted(async () => {
         <v-btn v-bind="activatorProps" color="surface-variant" variant="flat">+Dodaj nowy model</v-btn>
       </template>
       <v-card title="Dodaj nowy model" rounded="lg">
-        <ModelForm :model="modelToAdd" @on-close="addDialogVisible = false"></ModelForm>
+        <ModelForm :model-value="modelToAdd" @on-valid-submit="add(), addDialogVisible = false"></ModelForm>
       </v-card>
     </v-dialog>
 
@@ -87,7 +87,7 @@ onMounted(async () => {
         <!-- This activator is optional, you can place it where it fits your UI -->
       </template>
       <v-card title="Edytuj model" rounded="lg">
-        <EditModelForm :model="selectedModel" @on-close="editDialogVisible = false"></EditModelForm>
+        <EditModelForm :model-value="selectedModel" @on-close="editDialogVisible = false"></EditModelForm>
       </v-card>
     </v-dialog>
 

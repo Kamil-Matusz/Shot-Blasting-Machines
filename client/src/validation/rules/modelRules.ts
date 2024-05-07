@@ -4,6 +4,6 @@ import { minLength, required, minValue } from '@vuelidate/validators'
 
 export const modelRules = computed (() => ({
     name: { required },
-    price: { required},
-    comments: {}
+    price: { required },
+    comments: { required }
   }));

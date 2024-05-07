@@ -82,12 +82,12 @@ onMounted(async () => {
     </v-dialog>
 
     <!-- Edit Model Dialog -->
-    <v-dialog v-model="editDialogVisible" max-width="500">
+    <v-dialog v-model="editDialogVisible" max-width="1000">
       <template v-slot:activator="{ props: activatorProps }">
         <!-- This activator is optional, you can place it where it fits your UI -->
       </template>
       <v-card title="Edytuj model" rounded="lg">
-        <EditModelForm :model-value="selectedModel" @on-close="editDialogVisible = false"></EditModelForm>
+        <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel" @on-close="editDialogVisible = false"></EditModelForm>
       </v-card>
     </v-dialog>
 

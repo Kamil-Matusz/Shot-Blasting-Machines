@@ -3,6 +3,9 @@ import useVuelidate from '@vuelidate/core';
 import { modelRules } from '../../validation/rules/modelRules';
 import { InputCreateModel } from '../../models/model';
 import ValidatedTextField from '../ui/ValidatedTextField.vue';
+import NeededMaterialsTable from './NeededMaterialsTable.vue';
+import { ref } from 'vue';
+import type { Material } from '@/models/material';
 
 const emit = defineEmits(['onValidSubmit', 'onInvalidSubmit']);
 const model = defineModel<InputCreateModel>({ required: true });
@@ -20,6 +23,11 @@ const submit = async () => {
     emit('onInvalidSubmit');
 }
 
+// Define the props
+const props = defineProps<{
+  items: Material[]; // Define the type as per your data structure
+}>();
+
 </script>
 
 <template>
@@ -27,9 +35,17 @@ const submit = async () => {
         <validated-text-field :validation-prop="validator.name" label="Nazwa" class="mb-2"></validated-text-field>
         <validated-text-field :validation-prop="validator.price" :is-number="true" label="Cena" class="mb-2"></validated-text-field>
         <validated-text-field :validation-prop="validator.comments" label="Uwagi" class="mb-2"></validated-text-field>
+        
+        <!-- Assuming NeededMaterialsTable is a Vuetify component -->
+        <v-container fluid>
+            <v-layout row wrap>
+                <NeededMaterialsTable :items="props.items"></NeededMaterialsTable>
+            </v-layout>
+        </v-container>
+        
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" text="Dodaj" color="surface-variant" variant="flat"></v-btn>
+            <v-btn type="submit" text="Zapisz" color="surface-variant" variant="flat"></v-btn>
         </v-card-actions>
     </v-form>
 </template>

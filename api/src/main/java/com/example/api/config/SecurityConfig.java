@@ -30,6 +30,10 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .requestMatchers("/api/models/**")
+                .permitAll()
+                .requestMatchers("/api/materials/**")
+                .permitAll()
                 .requestMatchers("/login/**", "/register/**")
                 .permitAll()
                 .requestMatchers("/api/accesories/**").hasAnyAuthority("Administrator Systemu")

@@ -3,7 +3,7 @@ import { addErrorInterceptor } from './interceptors/errorInterceptor';
 import { addJwtInterceptor } from './interceptors/jwtInterceptor';
 
 const httpClient = axios.create({
-  baseURL: "api url will go here",
+  baseURL: "http://localhost:8080/api",
 });
 
 addErrorInterceptor(httpClient);

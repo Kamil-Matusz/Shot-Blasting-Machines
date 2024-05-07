@@ -1,7 +1,10 @@
 package com.example.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +22,8 @@ public class Model {
 
     @Column(name="comments", nullable = false)
     private String comments;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
+    private List<NeededMaterials> neededMaterials;
 }

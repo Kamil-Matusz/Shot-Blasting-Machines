@@ -3,7 +3,7 @@
 <template>
   <v-card style="z-index: 100">
     <v-layout>
-      <v-navigation-drawer expand-on-hover rail theme="dark">
+      <v-navigation-drawer expand-on-hover rail theme="dark" class="bg-black">
         <v-list>
           <v-list-item
             prepend-icon="mdi-account"

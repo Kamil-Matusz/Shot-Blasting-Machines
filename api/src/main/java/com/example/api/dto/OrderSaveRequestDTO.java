@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class OrderSaveRequestDTO {
     @NotNull(message = "Cena jest wymagana.")
@@ -23,6 +25,9 @@ public class OrderSaveRequestDTO {
     @NotNull(message = "Użytkownik jest wymagany.")
     private Long user;
 
-    @NotNull(message = "Maszyna jest wymagana.")
-    private Long machine;
+    @NotNull(message = "Model jest wymagany.")
+    private Long model;
+
+    @NotNull(message = "Akcesoria są wymagane.")
+    private List<Long> accesories;
 }

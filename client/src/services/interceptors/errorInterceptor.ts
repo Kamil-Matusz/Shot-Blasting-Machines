@@ -13,7 +13,7 @@ export function addErrorInterceptor(axiosInstance: Axios) {
             if (error.response) {
                 switch (error.response.status) {
                     case 400:
-                        toast.error(error.response.message);
+                        toast.error(error.response.data);
                         break;
                     case 401:
                         toast.error("Bład autoryzacji");

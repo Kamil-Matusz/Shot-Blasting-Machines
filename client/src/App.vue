@@ -1,14 +1,28 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Navigation from './components/layout/Navigation.vue'
+
+const handleMouseMove = (e: MouseEvent) => {
+  const cards = document.querySelectorAll('.magicCard');
+  cards.forEach((card: HTMLElement) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+  });
+};
 </script>
 
 <template>
   <Navigation></Navigation>
   <router-view v-slot="{ Component, route }">
-    <Transition name="slide" mode="out-in">
-      <component :key="route.name" :is="Component"></component>
-    </Transition>
+    <div class="card-container" @mousemove="handleMouseMove" ref="cardContainer">
+      <Transition name="slide" mode="out-in">
+        <component :key="route.name" :is="Component"></component>
+      </Transition>
+    </div>
   </router-view>
 </template>
 

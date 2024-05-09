@@ -52,7 +52,7 @@ export const useMaterialsStore = defineStore("materialsStore", () => {
   }
 
   async function dispatchTakeMaterial(id:number,amountToTake:number) {
-    const { data } = await API.materials.addMaterialAmount(id,amountToTake);
+    const { data } = await API.materials.takeMaterial(id,amountToTake);
     updateMaterial(data);
   }
 

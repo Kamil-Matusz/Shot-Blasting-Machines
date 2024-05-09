@@ -87,16 +87,16 @@ const select = () => {
           <v-checkbox class="ml-3"
             hide-details
             label="Hak holowniczy (+ 500 PLN)"
-            color="blue"
+            color="primary"
           />
           <v-checkbox class="ml-3"
             label="System odsysania pyłów (+ 3500 PLN)"
-            color="blue"
+            color="primary"
             hide-details
           />
           <v-checkbox class="ml-3"
             label="Dodatkowy zestaw kół (+ 1000 PLN)"
-            color="blue"
+            color="primary"
             hide-details
           />
         </v-card>
@@ -122,7 +122,7 @@ const select = () => {
           <v-dialog max-width="500" v-model="isActive">
           <template v-slot:activator="{ props: activatorProps }">
             <v-row>
-              <v-btn color="blue" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
+              <v-btn color="primary" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
             </v-row>
           </template>
 
@@ -157,7 +157,7 @@ const select = () => {
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue" class="ma-3" text="Zapisz" variant="flat" @click="confirm"></v-btn>
+                  <v-btn color="primary" class="ma-3" text="Zapisz" variant="flat" @click="confirm"></v-btn>
                   <v-btn text="Anuluj" @click="isActive = false"></v-btn>
                 </v-card-actions>
               </v-card>
@@ -235,7 +235,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="blue"
+            color="primary"
           >
             Dodaj klienta do bazy
           </v-btn>
@@ -250,7 +250,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="blue"
+            color="primary"
             @click="select"
           >
             Potwierdź

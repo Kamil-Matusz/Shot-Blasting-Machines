@@ -1,5 +1,6 @@
 package com.example.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class NeededMaterials {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "model_id", referencedColumnName = "id", nullable = false)
     private Model model;
 

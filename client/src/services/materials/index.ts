@@ -17,12 +17,12 @@ async function deleteMaterial(id: number) {
 
 //Increase Material Amount
 async function addMaterial(id: number, input: number) {
-  return await httpClient.patch<Material>(base, input);
+  return await httpClient.patch<Material>(`${base}/${id}/increase-amount`, { amount: input });
 }
 
 //Decrease Material Amount
 async function takeMaterial(id: number, input: number) {
-  return await httpClient.patch<Material>(base, input);
+  return await httpClient.patch<Material>(`${base}/${id}/decrease-amount`, { amount: input });
 }
 
 export default {

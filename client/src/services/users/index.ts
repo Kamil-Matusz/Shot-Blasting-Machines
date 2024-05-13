@@ -1,10 +1,11 @@
+import  { type PaginationParams } from "@/models/paginationParams";
 import httpClient from "../httpClient";
 import { type User, InputCreateUser } from "@/models/user";
 
 const base = 'users'
 
-async function getUsers() {
-  return await httpClient.get<User[]>(base);
+async function getPaginatedUsers(pagination: PaginationParams) {
+  return await httpClient.get<User[]>(base, {params: pagination});
 }
 
 async function createUser(input: InputCreateUser) {
@@ -21,8 +22,9 @@ async function updateUser(input: InputCreateUser, id: number) {
 
 
 export default {
-  getUsers,
+  getPaginatedUsers,
   createUser,
   deleteUser,
   updateUser
 };
+

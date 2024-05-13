@@ -2,9 +2,12 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { API } from "../services";
 import { type User, InputCreateUser } from '@/models/user';
+// @ts-ignore
+import { type PaginationParams } from "@/models/paginationParams";
 
 export const useUserStore = defineStore("usersStore", () => {
   const users = ref<User[]>([]);
+  const totalItems = ref(0);
 
   //Store private functions that operates on local array to update it after api operations alternatily you can reload whole array with dispatchGetMaterials
 
@@ -31,10 +34,12 @@ export const useUserStore = defineStore("usersStore", () => {
 
   //Functions that operates on api
 
-  async function dispatchGetUsers() {
-    const { data } = await API.users.getUsers();
+  async function dispatchGetUsers(pagination: PaginationParams) {
+    const { data } = await API.users.getPaginatedUsers(pagination);
     // @ts-ignore
     users.value = data.content;
+    // @ts-ignore
+    totalItems.value = data.totalElements;
   }
 
   async function dispatchCreateUser(input:InputCreateUser) {
@@ -57,6 +62,7 @@ export const useUserStore = defineStore("usersStore", () => {
     dispatchCreateUser,
     dispatchGetUsers,
     dispatchDeleteUser,
-    dispatchUpdateUser
+    dispatchUpdateUser,
+    totalItems
   };
 });

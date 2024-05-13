@@ -5,9 +5,12 @@ import { useToast } from 'vue-toastification';
 import {onMounted, ref} from 'vue';
 import { InputCreateUser, type User } from '@/models/user';
 import UserForm from '@/components/users/UserForm.vue';
+import { type PaginationParams, InputPagination } from '@/models/paginationParams';
 
 const usersStore = useUserStore();
-const toast = useToast()
+const toast = useToast();
+
+const pagination = ref(new InputPagination() as PaginationParams);
 
 const headers: ReadonlyHeaders = [
   {
@@ -19,14 +22,14 @@ const headers: ReadonlyHeaders = [
   { title: 'Nazwa', key: 'name', align: 'start' },
   { title: 'Email', key: 'email', align: 'start' },
   { title: 'Rola', key: 'role.name', align: 'start'},
-  { title: 'Akcje', key: 'actions', align: 'center' },
+  { title: 'Akcje', key: 'actions', align: 'center', sortable: false },
 ]
 
 //Temporary options to replace with real pagination 
 const options = ref({
-  itemsPerPage: 10,
-  totalItems: 10,
-  loading: false
+  itemsPerPage: pagination.value.size,
+  loading: true,
+  totalItems: 0
 });
 
 const userToAdd = ref(new InputCreateUser());
@@ -34,19 +37,27 @@ const userToEdit = ref(new InputCreateUser());
 const isActive = ref(false);
 const numToEdit = ref(0);
 
+const getUsers = async () => {
+  await usersStore.dispatchGetUsers(pagination.value);
+  options.value.totalItems = usersStore.totalItems;
+  options.value.loading = false;
+}
+
 onMounted(async () => {
-  await usersStore.dispatchGetUsers();
+  getUsers();
 });
 
 const addUser = async () => {
   await usersStore.dispatchCreateUser(userToAdd.value);
   toast.success("Pomyślnie dodano nowego użytkownika!");
   userToAdd.value = new InputCreateUser();
+  getUsers();
 }
 
 const deleteUser = async (id: number) => {
   await usersStore.dispatchDeleteUser(id);
-  toast.success("Pomyślnie usunięto użytkownika!")
+  toast.success("Pomyślnie usunięto użytkownika!");
+  getUsers();
 }
 
 const updateUser = async (id: number) => {
@@ -59,6 +70,14 @@ const openEditDialog = (user: User) => {
   numToEdit.value = user.id;
   isActive.value = true;
 };
+
+// @ts-ignore
+const handlePagination = ({ page, itemsPerPage }) => {
+  options.value.loading = true;
+  pagination.value.page = page-1;
+  pagination.value.size = itemsPerPage;
+  getUsers();
+}
 
 
 </script>
@@ -79,7 +98,8 @@ const openEditDialog = (user: User) => {
     </v-dialog>
 
     <v-data-table-server v-model:items-per-page="options.itemsPerPage" :headers="headers"
-      :items="usersStore.users" :items-length="options.totalItems" :loading="options.loading" item-value="name">
+      :items="usersStore.users" :items-length="options.totalItems" :loading="options.loading" item-value="name"
+      @update:options="({ page, itemsPerPage }) => handlePagination({ page, itemsPerPage })">
       
 
       <template v-slot:item.actions="{ item }" dense>

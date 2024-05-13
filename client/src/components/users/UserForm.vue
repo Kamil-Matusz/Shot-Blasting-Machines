@@ -6,6 +6,7 @@ import ValidatedTextField from '../ui/ValidatedTextField.vue';
 import { onMounted, ref } from 'vue';
 import { useRoleStore } from '@/stores/roleStore';
 import type { Role } from '@/models/role';
+import roles from '@/services/roles';
 
 const emit = defineEmits(['onValidSubmit', 'onInvalidSubmit']);
 const user = defineModel<InputCreateUser>({ required: true });
@@ -13,26 +14,14 @@ const validator = useVuelidate(userRules, user);
 
 const roleStore = useRoleStore();
 
-const role = ref("" as string);
-const editing = ref(true as boolean);
+const dataToSelect = ref([] as any[]);
+const dupa = ref("dupa");
 
 const submit = async () => {
     console.log('submit')
     validator.value.$touch()
     const result = await validator.value.$validate();
     if(result) {
-
-        let roleToModel = 0;
-
-        for (let i = 0; i < roleStore.roles.length; i++) {
-            if (roleStore.roles[i].name === role.value) {
-                roleToModel = roleStore.roles[i].id;
-                break;
-            }
-        }
-
-        user.value.role = roleToModel;
-
         console.log(user.value);
         emit('onValidSubmit');
         return
@@ -40,49 +29,34 @@ const submit = async () => {
     emit('onInvalidSubmit');
 }
 
-
 onMounted(async () => {
   await roleStore.dispatchGetRoles();
-
-  for (let i = 0; i < roleStore.roles.length; i++) {
-      if (roleStore.roles[i].id === user.value.role) {
-          role.value = roleStore.roles[i].name;
-          break;
-      }
-  }
-
-    if (user.value.name === "") editing.value = false;
+  let tempTab : any[] = [];
+  roleStore.roles.map((r:Role) => tempTab.push({name: r.name, value: r.id}));
+  dataToSelect.value = tempTab;
+  console.log(dataToSelect);
 });
 
 </script>
 
+// TODO: Dodawanie użytkownika (value roli na v-select)
+
 <template>
     <v-form class="pa-4" @submit.prevent="submit">
-
         <validated-text-field :validation-prop="validator.name" label="Nazwa" class="mb-2"></validated-text-field>
         <validated-text-field :validation-prop="validator.email" label="Email" class="mb-2"></validated-text-field>
 
         <v-select
-            :validation-prop="validator.role"
-            label="Rola"
-            class="mb-2"
-            :items="roleStore.roles.map((r:Role) => r.name)"
             variant="outlined"
-            density="compact"
-            v-model="role"
-            :value="role"
+            label="Rola" class="mb-2"
+            :items="roleStore.roles.map((role: Role) => role.name)"
         >
-
-        </v-select>
         
+        </v-select>
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit"
-                :text="editing ? 'Aktualizuj' : 'Dodaj'"
-                color="surface-variant"
-                variant="flat"
-                ></v-btn>
+            <v-btn type="submit" text="Dodaj" color="surface-variant" variant="flat"></v-btn>
         </v-card-actions>
     </v-form>
-</template>
+</template>s

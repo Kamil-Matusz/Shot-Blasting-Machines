@@ -87,16 +87,16 @@ const select = () => {
           <v-checkbox class="ml-3"
             hide-details
             label="Hak holowniczy (+ 500 PLN)"
-            color="primary"
+            color="blue"
           />
           <v-checkbox class="ml-3"
             label="System odsysania pyłów (+ 3500 PLN)"
-            color="primary"
+            color="blue"
             hide-details
           />
           <v-checkbox class="ml-3"
             label="Dodatkowy zestaw kół (+ 1000 PLN)"
-            color="primary"
+            color="blue"
             hide-details
           />
         </v-card>
@@ -119,10 +119,10 @@ const select = () => {
         >
           <p class="ml-4 mr-4">Jeżeli klient potwierdza złożenia zamówienia, zapisz je w bazie danych.</p>
           
-          <v-dialog max-width="500" v-model="isActive">
+        <v-dialog max-width="500" v-model="isActive">
           <template v-slot:activator="{ props: activatorProps }">
             <v-row>
-              <v-btn color="primary" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
+              <v-btn color="blue" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
             </v-row>
           </template>
 
@@ -157,7 +157,7 @@ const select = () => {
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="primary" class="ma-3" text="Zapisz" variant="flat" @click="confirm"></v-btn>
+                  <v-btn color="blue" class="ma-3" text="Zapisz" variant="flat" @click="confirm"></v-btn>
                   <v-btn text="Anuluj" @click="isActive = false"></v-btn>
                 </v-card-actions>
               </v-card>
@@ -235,7 +235,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="primary"
+            color="blue"
           >
             Dodaj klienta do bazy
           </v-btn>
@@ -250,7 +250,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="primary"
+            color="blue"
             @click="select"
           >
             Potwierdź

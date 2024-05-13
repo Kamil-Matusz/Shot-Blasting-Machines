@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
-import UsersManagmentView from '../views/UsersManagmentView.vue'
+import UsersManagementView from '../views/UsersManagmentView.vue'
 import StoreView from '../views/StoreView.vue'
 import OrdersView from '../views/OrdersView.vue'
 import ProductionView from '../views/ProductionView.vue'
@@ -30,7 +30,7 @@ const router = createRouter({
     {
       path: '/users-managment',
       name: 'users-managment',
-      component: UsersManagmentView
+      component: UsersManagementView
     },
     {
       path: '/production',

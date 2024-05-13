@@ -1,4 +1,16 @@
 <script setup lang="ts">
+import { InputLoginData } from '@/models/authorizations';
+import { useJwtStore } from '@/stores/jwtStore';
+import { ref } from 'vue';
+
+const jwtStore = useJwtStore();
+
+const loginData = ref(new InputLoginData());
+
+const handleLogin = () => {
+  jwtStore.dispatchLogin(loginData.value);
+}
+
 </script>
 
 <template>
@@ -10,9 +22,9 @@
             <v-card-title  class="headline text-center">Logowanie</v-card-title>
             <v-card-text>
               <v-form class="text-center">
-                <v-text-field  label="E-mail użytkownika"></v-text-field>
-                <v-text-field  label="Hasło" type="password"></v-text-field>
-                <v-btn color="primary" type="submit">Zaloguj</v-btn>
+                <v-text-field v-model="loginData.email" label="E-mail użytkownika"></v-text-field>
+                <v-text-field v-model="loginData.password" label="Hasło" type="password"></v-text-field>
+                <v-btn color="primary" @click.prevent="handleLogin">Zaloguj</v-btn>
               </v-form>
             </v-card-text>
           </v-card>

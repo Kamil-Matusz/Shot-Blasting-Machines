@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class OrderDTO {
     private Long id;
     private Double price;
-    private LocalDateTime date;
+    private String date;
     private String comments;
     private ClientDTO client;
     private UserDTO user;
@@ -19,7 +19,7 @@ public class OrderDTO {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(order.getId());
         orderDTO.setPrice(order.getPrice());
-        orderDTO.setDate(order.getDate());
+        orderDTO.setDate(order.getDate().toString());
         orderDTO.setComments(order.getComments());
 
         ClientDTO clientDTO = ClientDTO.convertToDTO(order.getClient());

@@ -1,14 +1,25 @@
 package com.example.api.controller;
 
+import com.example.api.dto.AccesoryDTO;
 import com.example.api.dto.UserDTO;
 import com.example.api.dto.UserSaveRequestDTO;
+import com.example.api.model.Machine;
+import com.example.api.model.Model;
 import com.example.api.model.User;
+import com.example.api.repository.MachineRepository;
+import com.example.api.repository.ModelRepository;
 import com.example.api.repository.RoleRepository;
 import com.example.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,14 +37,18 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> getUsers() {
-        var users = userRepository.findAll();
+    public Page<UserDTO> getUsers(@RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "10") int size) {
 
-        List<UserDTO> usersDTOs = users.stream()
+        var pageable = PageRequest.of(page, size);
+
+        var usersPage = userRepository.findAll(pageable);
+
+        List<UserDTO> usersDTOs = usersPage.getContent().stream()
                 .map(UserDTO::convertToDTO)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(usersDTOs, HttpStatus.OK);
+        return new PageImpl<>(usersDTOs, pageable, usersPage.getTotalElements());
     }
 
     @PostMapping("")
@@ -60,6 +75,10 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserSaveRequestDTO userSaveRequestDTO, @PathVariable Long id) {
 
         var user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         if (user.getRole().getId().longValue() != userSaveRequestDTO.getRole().longValue()) {
             var role = roleRepository.findById(userSaveRequestDTO.getRole()).orElse(null);
@@ -93,4 +112,3 @@ public class UserController {
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 }
-

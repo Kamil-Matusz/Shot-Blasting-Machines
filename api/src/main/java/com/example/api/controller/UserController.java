@@ -41,7 +41,11 @@ public class UserController {
 
         var user = new User();
 
-        var role = roleRepository.findById(userSaveRequestDTO.getRole()).orElseThrow(() -> new RuntimeException("Role not found"));
+        var role = roleRepository.findById(userSaveRequestDTO.getRole()).orElse(null);
+
+        if (role == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         user.setEmail(userSaveRequestDTO.getEmail());
         user.setName(userSaveRequestDTO.getName());
@@ -55,10 +59,15 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserSaveRequestDTO userSaveRequestDTO, @PathVariable Long id) {
 
-        var user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        var user = userRepository.findById(id).orElse(null);
 
-        if (user.getRole().getId() != userSaveRequestDTO.getRole()) {
-            var role = roleRepository.findById(userSaveRequestDTO.getRole()).orElseThrow(() -> new RuntimeException("Role not found"));
+        if (user.getRole().getId().longValue() != userSaveRequestDTO.getRole().longValue()) {
+            var role = roleRepository.findById(userSaveRequestDTO.getRole()).orElse(null);
+
+            if (role == null) {
+                return ResponseEntity.notFound().build();
+            }
+
             user.setRole(role);
         }
 
@@ -74,7 +83,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
 
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         userRepository.delete(user);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }

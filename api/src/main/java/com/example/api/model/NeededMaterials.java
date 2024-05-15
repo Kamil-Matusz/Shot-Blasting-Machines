@@ -1,6 +1,5 @@
 package com.example.api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -18,6 +17,7 @@ public class NeededMaterials {
 
     @ManyToOne
     @JoinColumn(name = "model_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnoreProperties("neededMaterials")
     private Model model;
 
     @ManyToOne

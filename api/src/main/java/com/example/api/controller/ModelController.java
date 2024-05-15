@@ -112,5 +112,65 @@ public class ModelController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Model> updateModel(@PathVariable Long id, @RequestBody ModelCreateDTO modelCreateDTO) {
+        try {
+            // Check if the model exists
+            Optional<Model> modelOptional = modelRepository.findById(id);
+            if (modelOptional.isPresent()) {
+                Model model = modelOptional.get();
+
+                // Update model properties
+                model.setName(modelCreateDTO.getName());
+                model.setPrice(modelCreateDTO.getPrice());
+                model.setComments(modelCreateDTO.getComments());
+
+                // Update needed materials
+                List<NeededMaterials> neededMaterialsList = new ArrayList<>();
+                for (NeededMaterialsAddDTO neededMaterialsAddDTO : modelCreateDTO.getNeededMaterials()) {
+                    long materialId = neededMaterialsAddDTO.getId();
+                    int amount = neededMaterialsAddDTO.getAmount();
+                    Material material = materialRepository.findById(materialId).orElse(null);
+                    if (material != null) {
+                        // Check if needed material already exists
+                        Optional<NeededMaterials> existingNeededMaterial = model.getNeededMaterials().stream()
+                                .filter(needed -> needed.getMaterial().getId().equals(materialId))
+                                .findFirst();
+                        if (existingNeededMaterial.isPresent()) {
+                            // Update existing needed material
+                            NeededMaterials neededMaterials = existingNeededMaterial.get();
+                            neededMaterials.setAmount(amount);
+                            neededMaterialsList.add(neededMaterials);
+                        } else {
+                            // Add new needed material
+                            NeededMaterials neededMaterials = new NeededMaterials();
+                            neededMaterials.setModel(model);
+                            neededMaterials.setMaterial(material);
+                            neededMaterials.setAmount(amount);
+                            neededMaterialsList.add(neededMaterials);
+                        }
+                    } else {
+                        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                    }
+                }
+                // Remove any needed materials that are not in the updated list
+                model.getNeededMaterials().removeIf(needed -> !neededMaterialsList.contains(needed));
+
+                // Save the updated list of needed materials
+                neededMaterialsRepository.saveAll(neededMaterialsList);
+
+                // Save the updated model
+                Model updatedModel = modelRepository.save(model);
+
+                return new ResponseEntity<>(updatedModel, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 }

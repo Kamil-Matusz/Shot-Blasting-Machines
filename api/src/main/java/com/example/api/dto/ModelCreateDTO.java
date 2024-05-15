@@ -11,11 +11,11 @@ public class ModelCreateDTO {
     private String name;
     private double price;
     private String comments;
-    private List<Integer> neededMaterialIds;
-    public ModelCreateDTO(String name, double price, String comments, List<Integer> neededMaterialIds) {
+    private List<NeededMaterialsAddDTO> neededMaterials;
+    public ModelCreateDTO(String name, double price, String comments, List<NeededMaterialsAddDTO> neededMaterials) {
         this.name = name;
         this.price = price;
         this.comments = comments;
-        this.neededMaterialIds = neededMaterialIds;
+        this.neededMaterials = neededMaterials;
     }
 }

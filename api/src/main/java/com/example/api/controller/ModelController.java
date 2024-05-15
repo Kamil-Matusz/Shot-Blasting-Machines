@@ -1,6 +1,7 @@
 package com.example.api.controller;
 
 import com.example.api.dto.ModelCreateDTO;
+import com.example.api.dto.NeededMaterialsAddDTO;
 import com.example.api.model.Material;
 import com.example.api.model.Model;
 import com.example.api.model.NeededMaterials;
@@ -51,15 +52,16 @@ public class ModelController {
 
             // Handle needed materials
             List<NeededMaterials> neededMaterialsList = new ArrayList<>();
-            for (Integer materialId : modelCreateDTO.getNeededMaterialIds()) {
+            for (NeededMaterialsAddDTO neededMaterialsAddDTO : modelCreateDTO.getNeededMaterials()) {
                 // Retrieve material from repository based on ID
+                long materialId = neededMaterialsAddDTO.getId();
+                int amount = neededMaterialsAddDTO.getAmount();
                 Material material = materialRepository.findById((long)materialId).orElse(null);
                 if (material != null) {
                     NeededMaterials neededMaterials = new NeededMaterials();
                     neededMaterials.setModel(savedModel);
                     neededMaterials.setMaterial(material);
-                    // Set amount if needed
-                    neededMaterials.setAmount(100);
+                    neededMaterials.setAmount(amount);
                     neededMaterialsList.add(neededMaterials);
                 } else {
                     // Handle case where material with the given ID is not found

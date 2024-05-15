@@ -2,9 +2,11 @@ package com.example.api.controller;
 
 import com.example.api.dto.ModelCreateDTO;
 import com.example.api.dto.NeededMaterialsAddDTO;
+import com.example.api.model.Machine;
 import com.example.api.model.Material;
 import com.example.api.model.Model;
 import com.example.api.model.NeededMaterials;
+import com.example.api.repository.MachineRepository;
 import com.example.api.repository.MaterialRepository;
 import com.example.api.repository.ModelRepository;
 import com.example.api.repository.NeededMaterialsRepository;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/models")
@@ -25,11 +28,14 @@ public class ModelController {
     private final MaterialRepository materialRepository;
     private final NeededMaterialsRepository neededMaterialsRepository;
 
+    private final MachineRepository machineRepository;
+
     @Autowired
-    public ModelController(ModelRepository modelRepository, MaterialRepository materialRepository, NeededMaterialsRepository neededMaterialsRepository) {
+    public ModelController(ModelRepository modelRepository, MaterialRepository materialRepository, NeededMaterialsRepository neededMaterialsRepository, MachineRepository machineRepository) {
         this.modelRepository = modelRepository;
         this.materialRepository = materialRepository;
         this.neededMaterialsRepository = neededMaterialsRepository;
+        this.machineRepository = machineRepository;
     }
 
     @GetMapping("")
@@ -79,4 +85,32 @@ public class ModelController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteModel(@PathVariable Long id) {
+        try {
+            // Check if the model exists
+            Optional<Model> modelOptional = modelRepository.findById(id);
+            if (modelOptional.isPresent()) {
+                Model model = modelOptional.get();
+
+                // Check if there are any dependent machines
+                List<Machine> machines = machineRepository.findByModel(model);
+                if (!machines.isEmpty()) {
+                    return new ResponseEntity<>("Cannot delete model. It is referenced by existing machines.", HttpStatus.BAD_REQUEST);
+                }
+
+                // Delete the model
+                modelRepository.delete(model);
+
+                return new ResponseEntity<>("Model deleted successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Model not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to delete model", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

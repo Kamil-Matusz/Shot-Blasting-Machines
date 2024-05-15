@@ -12,5 +12,5 @@ export class InputCreateModel {
     name:string = ""
     price:number = 0
     comments:string = ""
-    neededMaterials:Material[] = []
+    neededMaterials: Material[] = []
 }

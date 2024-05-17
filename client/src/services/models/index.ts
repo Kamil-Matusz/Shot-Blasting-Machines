@@ -1,5 +1,5 @@
 import httpClient from "../httpClient";
-import { type Model, InputCreateModel } from "@/models/model";
+import { type Model, InputCreateModel, InputEditModel } from "@/models/model";
 
 const base = 'models'
 
@@ -15,7 +15,7 @@ async function deleteModel(id: number) {
   return await httpClient.delete<boolean>(`${base}/${id}`);
 }
 
-async function updateModel(id: number, input: Partial<InputCreateModel>) {
+async function updateModel(id: number, input: Partial<InputEditModel>) {
   return await httpClient.put<Model>(`${base}/${id}`, input);
 }
 

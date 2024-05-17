@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue'
 import type { VDataTable } from 'vuetify/components'
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import ModelForm from '@/components/models/ModelForm.vue';
 import EditModelForm from '@/components/models/EditModelForm.vue';
 import { useToast } from "vue-toastification";
-import { InputCreateModel, type Model } from '@/models/model';
+import { InputEditModel, InputCreateModel, type Model } from '@/models/model';
 import { useModelStore } from '@/stores/modelStore';
 
 type ReadonlyHeaders = VDataTable['$props']['headers']
@@ -42,7 +42,8 @@ const editDialogVisible = ref(false); // State for Edit Dialog
 const selectedModel = ref(new InputCreateModel()); // Holds the selected model for editing
 
 const editModel = (item: Model) => {
-  selectedModel.value = { ...item }; // Copy item properties to selectedModel
+  // Create an instance of InputEditModel using the selected model's data
+  selectedModel.value = new InputEditModel(item);
   editDialogVisible.value = true; // Open the edit dialog
 }
 
@@ -65,7 +66,17 @@ const deleteModel = async (id: number) => {
   }
 };
 
-
+const updateModel = async () => {
+  try {
+    // Assuming you have the ID of the model you want to update
+    const idToUpdate = 1; // Replace with the actual ID
+    // Pass the InputEditModel instance to dispatchUpdateModel
+    const updatedModel = await modelStore.dispatchUpdateModel(idToUpdate, selectedModel.value);
+    console.log('Model updated successfully:', updatedModel);
+  } catch (error) {
+    console.error('Error updating model:', error);
+  }
+};
 
 onMounted(async () => {
   // Fetch models from the store

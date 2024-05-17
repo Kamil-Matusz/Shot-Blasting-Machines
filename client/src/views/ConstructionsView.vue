@@ -39,7 +39,7 @@ const options = ref({
 const modelToAdd = ref(new InputCreateModel());
 const addDialogVisible = ref(false); // State for Add Dialog
 const editDialogVisible = ref(false); // State for Edit Dialog
-const selectedModel = ref(new InputCreateModel()); // Holds the selected model for editing
+const selectedModel = ref(new InputEditModel()); // Holds the selected model for editing
 
 const editModel = (item: Model) => {
   // Create an instance of InputEditModel using the selected model's data
@@ -68,9 +68,8 @@ const deleteModel = async (id: number) => {
 
 const updateModel = async () => {
   try {
-    // Assuming you have the ID of the model you want to update
     const idToUpdate = 1; // Replace with the actual ID
-    // Pass the InputEditModel instance to dispatchUpdateModel
+    console.log(selectedModel.value)
     const updatedModel = await modelStore.dispatchUpdateModel(idToUpdate, selectedModel.value);
     console.log('Model updated successfully:', updatedModel);
   } catch (error) {
@@ -108,7 +107,7 @@ onMounted(async () => {
       </template>
       <v-card title="Edytuj model" rounded="lg">
         <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel"
-          @on-close="editDialogVisible = false"></EditModelForm>
+          @on-close="editDialogVisible = false" @updateModel="updateModel"></EditModelForm>
       </v-card>
     </v-dialog>
 

@@ -17,11 +17,12 @@ const submit = async () => {
     const result = await validator.value.$validate();
     if (result) {
         console.log(model.value);
-        emit('onValidSubmit');
+        emit('updateModel');
         return
     }
     emit('onInvalidSubmit');
 }
+
 
 // Define the props
 const props = defineProps<{
@@ -40,7 +41,7 @@ const props = defineProps<{
         <v-container fluid>
             <v-layout row wrap>
                 <!-- Include the NeededMaterialsTable component and pass the items as a prop -->
-                <NeededMaterialsTable :items="props.items" @save-changes="saveChanges"></NeededMaterialsTable>
+                <NeededMaterialsTable :items="props.items"></NeededMaterialsTable>
             </v-layout>
         </v-container>
 

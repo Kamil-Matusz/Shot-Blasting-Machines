@@ -54,12 +54,18 @@ const add = () => {
   modelToAdd.value = new InputCreateModel();
 }
 
-const deleteModel = (id: number) => {
-  // materialsStore.dispatchDeleteMaterial(id) <= when api will be working;
-  toast.success("Pomyślnie usunięto model", {
-    timeout: 2000
-  });
-}
+const deleteModel = async (id: number) => {
+  try {
+    await modelStore.dispatchDeleteModel(id);
+    toast.success("Pomyślnie usunięto model", {
+      timeout: 2000
+    });
+  } catch (error) {
+    // Do nothing on error as it is handled by middleware
+  }
+};
+
+
 
 onMounted(async () => {
   // Fetch models from the store

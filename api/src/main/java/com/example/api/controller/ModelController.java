@@ -97,7 +97,7 @@ public class ModelController {
                 // Check if there are any dependent machines
                 List<Machine> machines = machineRepository.findByModel(model);
                 if (!machines.isEmpty()) {
-                    return new ResponseEntity<>("Cannot delete model. It is referenced by existing machines.", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Nie można usunąć modelu. Jest przypisany do istniejącej maszyny.", HttpStatus.BAD_REQUEST);
                 }
 
                 // Delete the model

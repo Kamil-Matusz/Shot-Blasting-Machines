@@ -7,7 +7,7 @@ async function getModels() {
   return await httpClient.get<Model[]>(base);
 }
 
-async function createModel(input: InputCreateModel) {
+async function createModel(input: InputEditModel) {
   return await httpClient.post<Model>(base, input);
 }
 

@@ -2,8 +2,8 @@
 import BasePage from '@/components/pages/BasePage.vue'
 import type { VDataTable } from 'vuetify/components'
 import { onMounted, ref } from 'vue';
-import ModelForm from '@/components/models/ModelForm.vue';
 import EditModelForm from '@/components/models/EditModelForm.vue';
+import AddModelForm from '@/components/models/AddModelForm.vue';
 import { useToast } from "vue-toastification";
 import { InputEditModel, InputCreateModel, type Model } from '@/models/model';
 import { useModelStore } from '@/stores/modelStore';
@@ -36,7 +36,7 @@ const options = ref({
   loading: false
 })
 
-const modelToAdd = ref(new InputCreateModel());
+const modelToAdd = ref(new InputEditModel());
 const addDialogVisible = ref(false); // State for Add Dialog
 const editDialogVisible = ref(false); // State for Edit Dialog
 const selectedModel = ref(new InputEditModel()); // Holds the selected model for editing
@@ -48,12 +48,22 @@ const editModel = (item: Model) => {
   editDialogVisible.value = true; // Open the edit dialog
 }
 
-const add = () => {
-  // materialsStore.dispatchCreateMaterial(materialToAdd) <= when api will be working;
-  toast.success("Pomyślnie dodano nowy model", {
-    timeout: 2000
-  });
-  modelToAdd.value = new InputCreateModel();
+const add = async () => {
+  try {
+    modelToAdd.value.neededMaterials.forEach((neededMaterial) => {
+      neededMaterial.id = neededMaterial.material.id;
+    });
+    console.log(modelToAdd);
+    await modelStore.dispatchCreateModel(modelToAdd.value);
+    toast.success("Pomyślnie dodano nowy model", {
+      timeout: 2000
+    });
+    await modelStore.dispatchGetModels();
+    items.value = modelStore.models;
+  } catch (error) {
+    //
+  }
+
 }
 
 const deleteModel = async (id: number) => {
@@ -70,8 +80,8 @@ const deleteModel = async (id: number) => {
 const updateModel = async () => {
   try {
     selectedModel.value.neededMaterials.forEach((neededMaterial) => {
-           neededMaterial.id = neededMaterial.material.id;
-        });
+      neededMaterial.id = neededMaterial.material.id;
+    });
     await modelStore.dispatchUpdateModel(selectedModelId, selectedModel.value);
     toast.success("Pomyślnie zaktualizowano model", {
       timeout: 2000
@@ -79,7 +89,7 @@ const updateModel = async () => {
     await modelStore.dispatchGetModels();
     items.value = modelStore.models;
   } catch (error) {
-      // Do nothing on error as it is handled by middleware
+    // Do nothing on error as it is handled by middleware
   }
 };
 
@@ -96,12 +106,14 @@ onMounted(async () => {
 
     <template #above-card>
       <!-- Add Model Dialog -->
-      <v-dialog v-model="addDialogVisible" max-width="500">
+      <v-dialog v-model="addDialogVisible" max-width="1000">
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn v-bind="activatorProps" color="primary" class="mb-4" style="max-width: 20rem;" variant="flat">+Dodaj nowy model</v-btn>
+          <v-btn v-bind="activatorProps" color="primary" class="mb-4" style="max-width: 20rem;" variant="flat">+Dodaj
+            nowy model</v-btn>
         </template>
         <v-card title="Dodaj nowy model" rounded="lg">
-          <ModelForm :model-value="modelToAdd" @on-valid-submit="add(), addDialogVisible = false"></ModelForm>
+          <AddModelForm :items="modelToAdd.neededMaterials" :model-value="modelToAdd"
+            @on-valid-submit="add(), addDialogVisible = false"></AddModelForm>
         </v-card>
       </v-dialog>
     </template>

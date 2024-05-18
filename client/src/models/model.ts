@@ -16,9 +16,9 @@ export class InputCreateModel {
 }
 
 export class InputEditModel {
-    name: string = "";
+    name: string = "Nazwa";
     price: number = 0;
-    comments: string = "";
+    comments: string = "Uwagi";
     neededMaterials: { id: number, amount: number, material: Material}[] = [];
 
     constructor(model?: Model) {

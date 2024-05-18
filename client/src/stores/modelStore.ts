@@ -36,7 +36,7 @@ export const useModelStore = defineStore("modelStore", () => {
     models.value = data;
   }
 
-  async function dispatchCreateModel(input:InputCreateModel) {
+  async function dispatchCreateModel(input:InputEditModel) {
     const { data } = await API.models.createModel(input);
     addNewModel(data);
   }

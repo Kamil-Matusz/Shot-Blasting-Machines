@@ -69,6 +69,9 @@ const deleteModel = async (id: number) => {
 
 const updateModel = async () => {
   try {
+    selectedModel.value.neededMaterials.forEach((neededMaterial) => {
+           neededMaterial.id = neededMaterial.material.id;
+        });
     await modelStore.dispatchUpdateModel(selectedModelId, selectedModel.value);
     toast.success("Pomyślnie zaktualizowano model", {
       timeout: 2000

@@ -40,9 +40,10 @@ const modelToAdd = ref(new InputCreateModel());
 const addDialogVisible = ref(false); // State for Add Dialog
 const editDialogVisible = ref(false); // State for Edit Dialog
 const selectedModel = ref(new InputEditModel()); // Holds the selected model for editing
+let selectedModelId = 0
 
 const editModel = (item: Model) => {
-  // Create an instance of InputEditModel using the selected model's data
+  selectedModelId = item.id
   selectedModel.value = new InputEditModel(item);
   editDialogVisible.value = true; // Open the edit dialog
 }
@@ -68,12 +69,12 @@ const deleteModel = async (id: number) => {
 
 const updateModel = async () => {
   try {
-    const idToUpdate = 1; // Replace with the actual ID
-    console.log(selectedModel.value)
-    const updatedModel = await modelStore.dispatchUpdateModel(idToUpdate, selectedModel.value);
-    console.log('Model updated successfully:', updatedModel);
+    await modelStore.dispatchUpdateModel(selectedModelId, selectedModel.value);
+    toast.success("Pomyślnie zaktualizowano model", {
+      timeout: 2000
+    });
   } catch (error) {
-    console.error('Error updating model:', error);
+      // Do nothing on error as it is handled by middleware
   }
 };
 

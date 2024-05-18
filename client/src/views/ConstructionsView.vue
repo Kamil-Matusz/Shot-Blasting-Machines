@@ -76,6 +76,8 @@ const updateModel = async () => {
     toast.success("Pomyślnie zaktualizowano model", {
       timeout: 2000
     });
+    await modelStore.dispatchGetModels();
+    items.value = modelStore.models;
   } catch (error) {
       // Do nothing on error as it is handled by middleware
   }
@@ -111,7 +113,7 @@ onMounted(async () => {
       </template>
       <v-card title="Edytuj model" rounded="lg">
         <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel"
-          @on-close="editDialogVisible = false" @updateModel="updateModel"></EditModelForm>
+          @on-close="editDialogVisible = false" @on-valid-submit="updateModel"></EditModelForm>
       </v-card>
     </v-dialog>
 

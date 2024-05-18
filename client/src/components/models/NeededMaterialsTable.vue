@@ -7,7 +7,6 @@ const props = defineProps<{
 }>();
 
 const headers = [
-  { text: 'ID', value: 'id' },
   { text: 'Name', value: 'name' },
   { text: 'Price', value: 'price' },
   { text: 'Amount', value: 'amount' },
@@ -25,7 +24,6 @@ const removeMaterial = (material: Material) => {
 
 
 <template>
-  <div>
     <v-data-table :headers="headers" :items="items" item-key="id" hide-default-footer>
       <template v-slot:item.material="{ item }">
         <span>{{ item.material.name }}</span>
@@ -37,5 +35,4 @@ const removeMaterial = (material: Material) => {
         <v-icon @click="removeMaterial(item)" color="red">mdi-delete</v-icon>
       </template>
     </v-data-table>
-  </div>
 </template>

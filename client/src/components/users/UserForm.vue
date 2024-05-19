@@ -15,7 +15,6 @@ const validator = useVuelidate(userRules, user);
 const roleStore = useRoleStore();
 
 const dataToSelect = ref([] as any[]);
-const dupa = ref("dupa");
 
 const submit = async () => {
     console.log('submit')

@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue';
-import { ref } from 'vue';
+import { useClientsStore } from '@/stores/clientStore';
+import { onMounted, ref, watch } from 'vue';
+import { type Client } from '@/models/client';
+
+const clientStore = useClientsStore()
 
 const isLoading = ref(false);
 const isActive = ref(false);
 const isSaved = ref(false);
 const isClientSelected = ref(false);
+
+const selectedClient = ref({} as Client);
 
 function confirm() {
   isLoading.value = true;
@@ -16,9 +22,29 @@ function confirm() {
   }, 2000);
 }
 
-const select = () => {
+const confirmClientSelect = () => {
   isClientSelected.value = true
 }
+
+const selectClient = (value:string) => {
+  let splitted = value.split("   ");
+  clientStore.clients.forEach((client:Client) => {
+    if (splitted[0] == client.name && splitted[1].slice(1,-1) == client.address) {
+      selectedClient.value = client;
+    }
+  })
+
+  console.log(selectedClient.value);
+}
+
+const getClients = () => {
+  clientStore.dispatchGetClients();
+  selectedClient.value = clientStore.clients[0]
+}
+
+onMounted(() => {
+  getClients()
+})
 </script>
 
 
@@ -122,7 +148,7 @@ const select = () => {
         <v-dialog max-width="500" v-model="isActive">
           <template v-slot:activator="{ props: activatorProps }">
             <v-row>
-              <v-btn color="blue" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
+              <v-btn color="primary" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
             </v-row>
           </template>
 
@@ -182,19 +208,14 @@ const select = () => {
           subtitle="Wybierz klienta z listy."
         >
 
-        <v-text-field
-          list="clients-list"
+        <v-select
           class="ml-4 mr-4"
-        ></v-text-field>
-      
-        <datalist id="clients-list">
-          <option value="Agatha Jenkins"></option>
-          <option value="Adam Jenkins"></option>
-          <option value="Jan Kowalski"></option>
-          <option value="Andrzej Miś"></option>
-          <option value="Adrian Busz"></option>
-        </datalist>
-      
+          variant="outlined"
+          :items="clientStore.clients.map((client: Client) => client.name + '   (' + client.address + ')')"
+          @update:modelValue="selectClient"
+        ></v-select>
+
+              
   </v-card>
 
   <v-card class="mb-5"
@@ -203,7 +224,7 @@ const select = () => {
           subtitle="Przed potwierdzeniem zapytaj klienta, czy dane w bazie są poprawne."
         >
 
-        <v-table class="ml-4 mr-4">
+        <v-table class="ml-4 mr-4 mb-4">
           <thead>
             <tr>
               <th>ID</th>
@@ -215,11 +236,11 @@ const select = () => {
           </thead>
           <tbody>
             <tr>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
+              <td>{{ selectedClient.id }}</td>
+              <td>{{ selectedClient.name }}</td>
+              <td>{{ selectedClient.email }}</td>
+              <td>{{ selectedClient.phoneNumber }}</td>
+              <td>{{ selectedClient.address }}</td>
             </tr>
           </tbody>
         </v-table>
@@ -235,7 +256,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="blue"
+            color="primary"
           >
             Dodaj klienta do bazy
           </v-btn>
@@ -250,7 +271,7 @@ const select = () => {
         >
           <v-btn
             class="ma-3"
-            color="blue"
+            color="primary"
             @click="select"
           >
             Potwierdź

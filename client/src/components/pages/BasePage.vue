@@ -10,7 +10,7 @@ defineProps<{
   <div class="ml-14 h-screen pa-8 pb-12 d-flex flex-column">
     <h2 class="text-h4 text-white my-4 text-left">{{ title }}</h2>
     <slot name="above-card"></slot>
-    <BaseCardWithHover style="height:100%">
+    <BaseCardWithHover style="min-height:100%;">
       <slot></slot>
     </BaseCardWithHover>
   </div>

@@ -14,10 +14,10 @@ export interface Order {
 
 export class InputCreateOrder {
     price:number = 0.0
-    date:Date = new Date()
+    date:string = ""
     comments:string = ""
     client:number = 0
     user:number = 0
     model:number = 0
-    accessoriers:number[] = []
+    accessories:number[] = []
 }

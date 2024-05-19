@@ -58,6 +58,7 @@ const add = async () => {
     toast.success("Pomyślnie dodano nowy model", {
       timeout: 2000
     });
+    modelToAdd.value = new InputEditModel();
     await modelStore.dispatchGetModels();
     items.value = modelStore.models;
   } catch (error) {

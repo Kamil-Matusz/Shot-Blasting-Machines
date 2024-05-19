@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { API } from "../services";
-import { type Model, InputCreateModel } from '@/models/model';
+import { type Model, InputCreateModel, InputEditModel } from '@/models/model';
 
 export const useModelStore = defineStore("modelStore", () => {
   const models = ref<Model[]>([]);
@@ -36,7 +36,7 @@ export const useModelStore = defineStore("modelStore", () => {
     models.value = data;
   }
 
-  async function dispatchCreateModel(input:InputCreateModel) {
+  async function dispatchCreateModel(input:InputEditModel) {
     const { data } = await API.models.createModel(input);
     addNewModel(data);
   }
@@ -46,10 +46,17 @@ export const useModelStore = defineStore("modelStore", () => {
     removeModel(id);
   }
 
+  async function dispatchUpdateModel(id:number, updatedModel:InputEditModel) {
+      const { data } = await API.models.updateModel(id, updatedModel);
+      updateModel(data);
+  }
+  
+
   return {
     models,
     dispatchCreateModel,
     dispatchGetModels,
-    dispatchDeleteModel
+    dispatchDeleteModel,
+    dispatchUpdateModel
   };
 });

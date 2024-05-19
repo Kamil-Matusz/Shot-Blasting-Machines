@@ -85,9 +85,10 @@ const handlePagination = ({ page, itemsPerPage }) => {
 <template>
   <BasePage title="Zarządzanie użytkownikami">
     
+    <template #above-card>
     <v-dialog max-width="500">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps" color="surface-variant" variant="flat">+Dodaj nowego użytkownika</v-btn>
+        <v-btn v-bind="activatorProps" color="primary" variant="flat" class="mb-4" style="max-width: 20rem;">+Dodaj nowego użytkownika</v-btn>
       </template>
 
       <template v-slot:default="{ isActive }">
@@ -96,6 +97,7 @@ const handlePagination = ({ page, itemsPerPage }) => {
         </v-card>
       </template>
     </v-dialog>
+  </template>
 
     <v-data-table-server v-model:items-per-page="options.itemsPerPage" :headers="headers"
       :items="usersStore.users" :items-length="options.totalItems" :loading="options.loading" item-value="name"
@@ -104,7 +106,7 @@ const handlePagination = ({ page, itemsPerPage }) => {
 
       <template v-slot:item.actions="{ item }" dense>
 
-        <v-btn @click="openEditDialog(item)" rounded="lg" size="small" color="blue" class="ml-2" icon="mdi-pen"></v-btn>
+        <v-btn @click="openEditDialog(item)" rounded="lg" size="small" color="primary" class="ml-2" icon="mdi-pen"></v-btn>
 
         <v-btn @click="deleteUser(item.id)" rounded="lg" size="small" color="red" class="ml-2"
           icon="mdi-delete"></v-btn>

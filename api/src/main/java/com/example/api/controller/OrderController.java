@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.example.api.dto.OrderDTO.convertToDTO;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -28,10 +25,10 @@ public class OrderController {
     private final OrderStateRepository orderStateRepository;
     private final UserRepository userRepository;
     private final ModelRepository modelRepository;
-    private final AccesoryRepository accessoryRepository;
+    private final AccessoryRepository accessoryRepository;
 
     @Autowired
-    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccesoryRepository accessoryRepository) {
+    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
@@ -45,7 +42,7 @@ public class OrderController {
     public ResponseEntity<OrderDTO> addOrder(@RequestBody OrderSaveRequestDTO orderSaveRequestDTO) {
         Order order = new Order();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(orderSaveRequestDTO.getDate(), formatter);
         order.setDate(dateTime);
 
@@ -57,7 +54,7 @@ public class OrderController {
         Machine newMachine = new Machine();
         newMachine.setModel(model);
 
-        var accesories = accessoryRepository.findAllById(orderSaveRequestDTO.getAccesories());
+        var accesories = accessoryRepository.findAllById(orderSaveRequestDTO.getAccessories());
         newMachine.setAccessories(accesories);
 
         machineRepository.save(newMachine);

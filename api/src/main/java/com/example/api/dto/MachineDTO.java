@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class MachineDTO {
     private Long id;
     private Model model;
-    private List<AccesoryDTO> accessories;
+    private List<AccessoryDTO> accessories;
 
     public static MachineDTO convertToDTO(Machine machine) {
         MachineDTO machineDTO = new MachineDTO();
@@ -20,13 +20,13 @@ public class MachineDTO {
         machineDTO.setModel(machine.getModel());
 
         if (machine.getAccessories() != null) {
-            List<AccesoryDTO> accesoryDTOs = machine.getAccessories().stream()
-                    .map(AccesoryDTO::convertToDTO)
+            List<AccessoryDTO> accessoryDTOS = machine.getAccessories().stream()
+                    .map(AccessoryDTO::convertToDTO)
                     .collect(Collectors.toList());
 
-            machineDTO.setAccessories(accesoryDTOs);
+            machineDTO.setAccessories(accessoryDTOS);
         }
-        else machineDTO.setAccessories(new ArrayList<AccesoryDTO>());
+        else machineDTO.setAccessories(new ArrayList<AccessoryDTO>());
 
         return machineDTO;
     }

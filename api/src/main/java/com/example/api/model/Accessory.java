@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name="accesories")
-public class Accesory {
+public class Accessory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,8 @@ public class Accesory {
 
     @ManyToMany
     @JoinTable(
-        name="machines_accesories",
-        joinColumns = @JoinColumn(name = "accesory_id"),
+        name="machines_accessories",
+        joinColumns = @JoinColumn(name = "accessory_id"),
         inverseJoinColumns = @JoinColumn(name = "machine_id"))
     private List<Machine> machines;
 }

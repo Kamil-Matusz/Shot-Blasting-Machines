@@ -1,13 +1,8 @@
 package com.example.api.controller;
 
-import com.example.api.dto.AccesoryDTO;
 import com.example.api.dto.UserDTO;
 import com.example.api.dto.UserSaveRequestDTO;
-import com.example.api.model.Machine;
-import com.example.api.model.Model;
 import com.example.api.model.User;
-import com.example.api.repository.MachineRepository;
-import com.example.api.repository.ModelRepository;
 import com.example.api.repository.RoleRepository;
 import com.example.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 

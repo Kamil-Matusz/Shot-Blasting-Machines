@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import BasePage from '@/components/pages/BasePage.vue'
-import type { VDataTable } from 'vuetify/components'
-import { onMounted, ref } from 'vue';
+import BasePage from '@/components/pages/BasePage.vue';
+import type { VDataTable } from 'vuetify/components';
+import { onMounted, ref, watch } from 'vue';
 import EditModelForm from '@/components/models/EditModelForm.vue';
 import AddModelForm from '@/components/models/AddModelForm.vue';
 import { useToast } from "vue-toastification";
-import { InputEditModel, InputCreateModel, type Model } from '@/models/model';
+import { InputEditModel, type Model } from '@/models/model';
 import { useModelStore } from '@/stores/modelStore';
+import { InputPagination, type PaginationParams } from '@/models/paginationParams';
 
-type ReadonlyHeaders = VDataTable['$props']['headers']
+type ReadonlyHeaders = VDataTable['$props']['headers'];
 
 const modelStore = useModelStore();
 const toast = useToast();
+
+const pagination = ref(new InputPagination() as PaginationParams);
 
 const headers: ReadonlyHeaders = [
   {
@@ -24,29 +27,36 @@ const headers: ReadonlyHeaders = [
   { title: 'Cena', key: 'price', align: 'start' },
   { title: 'Uwagi', key: 'comments', align: 'start' },
   { title: 'Akcje', key: 'actions', align: 'end' },
-]
+];
 
 const items = ref<Model[]>([]);
-console.log(items)
+console.log(items);
 
-//Temporary options to replace with real pagination data
 const options = ref({
-  itemsPerPage: 10,
-  totalItems: 10,
-  loading: false
-})
+  itemsPerPage: pagination.value.size || 10,
+  loading: true,
+  totalItems: 0,
+});
+
+const getModels = async () => {
+  options.value.loading = true;
+  await modelStore.dispatchGetModels(pagination.value);
+  options.value.totalItems = modelStore.totalItems;
+  items.value = modelStore.models;
+  options.value.loading = false;
+};
 
 const modelToAdd = ref(new InputEditModel());
 const addDialogVisible = ref(false); // State for Add Dialog
 const editDialogVisible = ref(false); // State for Edit Dialog
 const selectedModel = ref(new InputEditModel()); // Holds the selected model for editing
-let selectedModelId = 0
+let selectedModelId = 0;
 
 const editModel = (item: Model) => {
-  selectedModelId = item.id
+  selectedModelId = item.id;
   selectedModel.value = new InputEditModel(item);
   editDialogVisible.value = true; // Open the edit dialog
-}
+};
 
 const add = async () => {
   try {
@@ -56,25 +66,24 @@ const add = async () => {
     console.log(modelToAdd);
     await modelStore.dispatchCreateModel(modelToAdd.value);
     toast.success("Pomyślnie dodano nowy model", {
-      timeout: 2000
+      timeout: 2000,
     });
     modelToAdd.value = new InputEditModel();
-    await modelStore.dispatchGetModels();
-    items.value = modelStore.models;
+    await getModels();
   } catch (error) {
-    //
+    // Handle error
   }
-
-}
+};
 
 const deleteModel = async (id: number) => {
   try {
     await modelStore.dispatchDeleteModel(id);
     toast.success("Pomyślnie usunięto model", {
-      timeout: 2000
+      timeout: 2000,
     });
+    await getModels();
   } catch (error) {
-    // Do nothing on error as it is handled by middleware
+    // Handle error
   }
 };
 
@@ -85,22 +94,33 @@ const updateModel = async () => {
     });
     await modelStore.dispatchUpdateModel(selectedModelId, selectedModel.value);
     toast.success("Pomyślnie zaktualizowano model", {
-      timeout: 2000
+      timeout: 2000,
     });
-    await modelStore.dispatchGetModels();
-    items.value = modelStore.models;
+    await getModels();
   } catch (error) {
-    // Do nothing on error as it is handled by middleware
+    // Handle error
   }
 };
 
+const handlePagination = ({ page, itemsPerPage }) => {
+  pagination.value.page = page - 1;
+  pagination.value.size = itemsPerPage;
+  getModels();
+};
+
+watch(
+  () => options.value.itemsPerPage,
+  (newVal) => {
+    pagination.value.size = newVal;
+    getModels();
+  }
+);
+
 onMounted(async () => {
-  // Fetch models from the store
-  await modelStore.dispatchGetModels();
-  // Once data is fetched, assign it to the items ref
-  items.value = modelStore.models;
+  await getModels();
 });
 </script>
+
 
 <template>
   <BasePage title="Konstrukcja maszyn">
@@ -122,7 +142,6 @@ onMounted(async () => {
     <!-- Edit Model Dialog -->
     <v-dialog v-model="editDialogVisible" max-width="1000">
       <template v-slot:activator="{ props: activatorProps }">
-        <!-- This activator is optional, you can place it where it fits your UI -->
       </template>
       <v-card title="Edytuj model" rounded="lg">
         <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel"
@@ -131,7 +150,7 @@ onMounted(async () => {
     </v-dialog>
 
     <v-data-table-server v-model:items-per-page="options.itemsPerPage" :headers="headers" :items="items"
-      :items-length="options.totalItems" :loading="options.loading" item-value="id">
+      :items-length="options.totalItems" :loading="options.loading" item-value="id" @update:options="handlePagination">
       <template v-slot:item.actions="{ item }" dense>
         <v-btn @click="editModel(item)" rounded="lg" size="small" color="primary" class="ml-2" icon>
           <v-icon>mdi-pencil</v-icon>

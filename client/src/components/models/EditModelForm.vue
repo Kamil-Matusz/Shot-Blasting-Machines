@@ -4,7 +4,7 @@ import { modelRules } from '../../validation/rules/modelRules';
 import { InputEditModel } from '../../models/model';
 import ValidatedTextField from '../ui/ValidatedTextField.vue';
 import NeededMaterialsTable from './NeededMaterialsTable.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useMaterialsStore } from '@/stores/materialStore';
 import type { Material } from '@/models/material';
 
@@ -57,6 +57,11 @@ const addMaterial = () => {
     }
 }
 
+const isSaveDisabled = computed(() => {
+  // Check if any item's amount is less than 1
+  return props.items.some(item => item.amount < 1);
+});
+
 </script>
 
 
@@ -82,7 +87,7 @@ const addMaterial = () => {
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" text="Zapisz" color="primary" variant="flat"></v-btn>
+            <v-btn type="submit" text="Zapisz" color="primary" variant="flat" :disabled="isSaveDisabled"></v-btn>
         </v-card-actions>
     </v-form>
 </template>

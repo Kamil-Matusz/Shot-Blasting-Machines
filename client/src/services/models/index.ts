@@ -1,7 +1,12 @@
+import type { PaginationParams } from "@/models/paginationParams";
 import httpClient from "../httpClient";
 import { type Model, InputCreateModel, InputEditModel } from "@/models/model";
 
 const base = 'models'
+
+async function getPaginatedModels(pagination: PaginationParams) {
+  return await httpClient.get<Model[]>(base, {params: pagination});
+}
 
 async function getModels() {
   return await httpClient.get<Model[]>(base);
@@ -23,5 +28,6 @@ export default {
   getModels,
   createModel,
   deleteModel,
-  updateModel
+  updateModel,
+  getPaginatedModels
 };

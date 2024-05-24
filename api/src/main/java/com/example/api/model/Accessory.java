@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name="accesories")
+@Table(name="accessories")
 public class Accessory {
 
     @Id

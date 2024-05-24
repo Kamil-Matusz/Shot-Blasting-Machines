@@ -29,7 +29,8 @@ INSERT INTO order_states (name) VALUES ('Skompletowane');
 INSERT INTO order_states (name) VALUES ('Wysłane');
 INSERT INTO order_states (name) VALUES ('Odebrane');
 
-INSERT INTO accesories (name, price) VALUES ('Zawieszka', 50.00);
+INSERT INTO accessories (name, price) VALUES ('Zawieszka', 50.00);
+INSERT INTO accessories (name, price) VALUES ('Hak holowniczy', 250.00);
 
 INSERT INTO models (name, price, comments) VALUES ('Standard', 50000.00, 'Podstawowy model śrutownicy');
 INSERT INTO models (name, price, comments) VALUES ('XL', 10000.00, 'Model w wersji XL z powiększonym koszem');

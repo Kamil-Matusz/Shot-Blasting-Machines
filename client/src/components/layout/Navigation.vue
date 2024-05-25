@@ -21,7 +21,12 @@
             to="/dashboard"
           ></v-list-item>
           <v-list-item
-            prepend-icon="mdi-account-multiple"
+            prepend-icon="mdi-account-group"
+            title="Klienci"
+            to="/clients"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-account-tie"
             title="Zarządzanie użytkownikami"
             to="/users-managment"
           ></v-list-item>

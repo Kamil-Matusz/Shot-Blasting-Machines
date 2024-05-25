@@ -15,7 +15,7 @@ public class ClientSaveRequestDTO {
     private String email;
 
     @NotNull(message = "Numer telefonu jest wymagany.")
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Numer telefonu musi zawierać od 10 do 15 cyfr i może zawierać opcjonalny znak + na początku.")
+    @Size(min = 9, message = "Numer telefonu musi mieć conajmniej 9 znaków.")
     private String phoneNumber;
 
     @NotNull(message = "Adres jest wymagany.")

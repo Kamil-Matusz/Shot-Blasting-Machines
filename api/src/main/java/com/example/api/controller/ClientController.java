@@ -2,10 +2,14 @@ package com.example.api.controller;
 
 import com.example.api.dto.ClientDTO;
 import com.example.api.dto.ClientSaveRequestDTO;
+import com.example.api.dto.UserDTO;
 import com.example.api.model.Client;
 import com.example.api.repository.ClientRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +30,16 @@ public class ClientController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ClientDTO>> getAllClients() {
-        List<Client> clients = clientRepository.findAll();
-        List<ClientDTO> clientDTOs = clients.stream()
+    public Page<ClientDTO> getAllClients(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size) {
+        var pageable = PageRequest.of(page, size);
+        var clientPage = clientRepository.findAll(pageable);
+
+
+        List<ClientDTO> clientDTOs = clientPage.stream()
                 .map(ClientDTO::convertToDTO)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(clientDTOs, HttpStatus.OK);
+        return new PageImpl<>(clientDTOs, pageable, clientPage.getTotalElements());
     }
 
     @GetMapping("/{id}")

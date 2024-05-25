@@ -1,6 +1,7 @@
 package com.example.api.controller;
 
 import com.example.api.dto.UserDTO;
+import com.example.api.dto.UserPasswordUpdateDTO;
 import com.example.api.dto.UserSaveRequestDTO;
 import com.example.api.model.User;
 import com.example.api.repository.RoleRepository;
@@ -104,5 +105,27 @@ public class UserController {
 
         userRepository.delete(user);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<UserDTO> updatePassword(@RequestBody UserPasswordUpdateDTO userPasswordUpdateDTO, @PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (user.getPassword().equals(userPasswordUpdateDTO.getOldPassword()) && userPasswordUpdateDTO.getNewPassword().equals(userPasswordUpdateDTO.getRepeatNewPassword())) {
+            user.setPassword(userPasswordUpdateDTO.getNewPassword());
+
+            userRepository.save(user);
+
+            return new ResponseEntity<>(UserDTO.convertToDTO(user), HttpStatus.OK);
+        }
+        else {
+            System.out.println(userPasswordUpdateDTO);
+
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }

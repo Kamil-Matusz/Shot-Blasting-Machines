@@ -3,6 +3,7 @@ package com.example.api.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Blob;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,8 +21,12 @@ public class Order {
     @Column(name="date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name="comments", nullable = false)
+    @Column(name="comments", nullable = true)
     private String comments;
+
+    @Lob()
+    @Column(name="summary", nullable = true, columnDefinition = "BLOB")
+    private byte[] summary;
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)

@@ -9,6 +9,7 @@
             prepend-icon="mdi-account"
             title="Admin"
             subtitle="Imie nazwisko"
+            to="/profile"
           ></v-list-item>
         </v-list>
 

@@ -1,5 +1,7 @@
 package com.example.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,6 +24,7 @@ public class Material {
     @Column(name="amount", nullable = false)
     private Integer amount;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
     private List<NeededMaterials> neededMaterials;
 }

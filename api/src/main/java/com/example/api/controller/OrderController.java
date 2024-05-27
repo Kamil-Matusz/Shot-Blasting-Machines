@@ -4,20 +4,27 @@ import com.example.api.dto.*;
 import com.example.api.dto.params.OrderParams;
 import com.example.api.model.*;
 import com.example.api.repository.*;
+import com.example.api.utils.PdfGenerator;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfWriter;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.example.api.dto.OrderDTO.convertToDTO;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -29,11 +36,10 @@ public class OrderController {
     private final OrderStateRepository orderStateRepository;
     private final UserRepository userRepository;
     private final ModelRepository modelRepository;
-    private final AccesoryRepository accessoryRepository;
-    private final MaterialRepository materialRepository;
+    private final AccessoryRepository accessoryRepository;
 
     @Autowired
-    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccesoryRepository accessoryRepository,MaterialRepository materialRepository) {
+    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
@@ -77,7 +83,7 @@ public class OrderController {
     public ResponseEntity<OrderDTO> addOrder(@RequestBody OrderSaveRequestDTO orderSaveRequestDTO) {
         Order order = new Order();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(orderSaveRequestDTO.getDate(), formatter);
         order.setDate(dateTime);
 
@@ -89,8 +95,8 @@ public class OrderController {
         Machine newMachine = new Machine();
         newMachine.setModel(model);
 
-        var accesories = accessoryRepository.findAllById(orderSaveRequestDTO.getAccesories());
-        newMachine.setAccessories(accesories);
+        var accessories = accessoryRepository.findAllById(orderSaveRequestDTO.getAccessories());
+        newMachine.setAccessories(accessories);
 
         machineRepository.save(newMachine);
 
@@ -104,6 +110,10 @@ public class OrderController {
 
         OrderState orderState = orderStateRepository.findById(1L).orElseThrow(() -> new RuntimeException("Order state not found"));
         order.setState(orderState);
+
+        orderRepository.save(order);
+
+        order.setSummary(PdfGenerator.createPDF(order));
 
         orderRepository.save(order);
         OrderDTO orderDTO = OrderDTO.convertToDTO(order);
@@ -186,5 +196,21 @@ public class OrderController {
 
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<byte[]> getPdfSummary(@PathVariable Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getSummary() == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "SummaryOrder#" + id + ".pdf");
+            headers.setContentLength(order.getSummary().length);
+            return new ResponseEntity<>(order.getSummary(), headers, HttpStatus.OK);
+        }
     }
 }

@@ -29,5 +29,5 @@ public class OrderSaveRequestDTO {
     private Long model;
 
     @NotNull(message = "Akcesoria są wymagane.")
-    private List<Long> accesories;
+    private List<Long> accessories;
 }

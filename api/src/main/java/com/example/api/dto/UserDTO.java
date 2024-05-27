@@ -11,6 +11,7 @@ public class UserDTO {
     private String name;
     private String email;
     private Role role;
+//    private String password;
 
     public static UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
@@ -18,6 +19,7 @@ public class UserDTO {
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setRole(user.getRole());
+//        userDTO.setPassword(user.getPassword());
         return userDTO;
     }
 }

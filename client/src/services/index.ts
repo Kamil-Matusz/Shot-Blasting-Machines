@@ -3,6 +3,8 @@ import modelsStoreController from "./models";
 import usersStoreController from "./users";
 import rolesStoreController from "./roles";
 import jwtStoreController from "./jwt";
+import clientsStoreController from "./clients";
+import accessoriesStoreController from "./accessories";
 import ordersStoreController from "./orders";
 
 
@@ -13,4 +15,6 @@ export const API = {
   roles: rolesStoreController,
   orders: ordersStoreController,
   jwt: jwtStoreController
+  clients: clientsStoreController,
+  accessories: accessoriesStoreController,
 };

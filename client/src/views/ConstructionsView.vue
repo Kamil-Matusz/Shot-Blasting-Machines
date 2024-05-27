@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import BasePage from '@/components/pages/BasePage.vue'
-import type { VDataTable } from 'vuetify/components'
-import { onMounted, reactive, ref } from 'vue';
-import ModelForm from '@/components/models/ModelForm.vue';
+import BasePage from '@/components/pages/BasePage.vue';
+import type { VDataTable } from 'vuetify/components';
+import { onMounted, ref, watch } from 'vue';
 import EditModelForm from '@/components/models/EditModelForm.vue';
+import AddModelForm from '@/components/models/AddModelForm.vue';
 import { useToast } from "vue-toastification";
-import { InputCreateModel, type Model } from '@/models/model';
+import { InputEditModel, type Model } from '@/models/model';
 import { useModelStore } from '@/stores/modelStore';
+import { InputPagination, type PaginationParams } from '@/models/paginationParams';
 
-type ReadonlyHeaders = VDataTable['$props']['headers']
+type ReadonlyHeaders = VDataTable['$props']['headers'];
 
 const modelStore = useModelStore();
 const toast = useToast();
+
+const pagination = ref(new InputPagination() as PaginationParams);
 
 const headers: ReadonlyHeaders = [
   {
@@ -24,62 +27,114 @@ const headers: ReadonlyHeaders = [
   { title: 'Cena', key: 'price', align: 'start' },
   { title: 'Uwagi', key: 'comments', align: 'start' },
   { title: 'Akcje', key: 'actions', align: 'end' },
-]
+];
 
 const items = ref<Model[]>([]);
-console.log(items)
+console.log(items);
 
-//Temporary options to replace with real pagination data
 const options = ref({
-  itemsPerPage: 10,
-  totalItems: 10,
-  loading: false
-})
+  itemsPerPage: pagination.value.size || 10,
+  loading: true,
+  totalItems: 0,
+});
 
-const modelToAdd = ref(new InputCreateModel());
+const getModels = async () => {
+  options.value.loading = true;
+  await modelStore.dispatchGetModels(pagination.value);
+  options.value.totalItems = modelStore.totalItems;
+  items.value = modelStore.models;
+  options.value.loading = false;
+};
+
+const modelToAdd = ref(new InputEditModel());
 const addDialogVisible = ref(false); // State for Add Dialog
 const editDialogVisible = ref(false); // State for Edit Dialog
-const selectedModel = ref(new InputCreateModel()); // Holds the selected model for editing
+const selectedModel = ref(new InputEditModel()); // Holds the selected model for editing
+let selectedModelId = 0;
 
 const editModel = (item: Model) => {
-  selectedModel.value = { ...item }; // Copy item properties to selectedModel
+  selectedModelId = item.id;
+  selectedModel.value = new InputEditModel(item);
   editDialogVisible.value = true; // Open the edit dialog
-}
+};
 
-const add = () => {
-  // materialsStore.dispatchCreateMaterial(materialToAdd) <= when api will be working;
-  toast.success("Pomyślnie dodano nowy model", {
-    timeout: 2000
-  });
-  modelToAdd.value = new InputCreateModel();
-}
+const add = async () => {
+  try {
+    modelToAdd.value.neededMaterials.forEach((neededMaterial) => {
+      neededMaterial.id = neededMaterial.material.id;
+    });
+    console.log(modelToAdd);
+    await modelStore.dispatchCreateModel(modelToAdd.value);
+    toast.success("Pomyślnie dodano nowy model", {
+      timeout: 2000,
+    });
+    modelToAdd.value = new InputEditModel();
+    await getModels();
+  } catch (error) {
+    // Handle error
+  }
+};
 
-const deleteModel = (id: number) => {
-  // materialsStore.dispatchDeleteMaterial(id) <= when api will be working;
-  toast.success("Pomyślnie usunięto model", {
-    timeout: 2000
-  });
-}
+const deleteModel = async (id: number) => {
+  try {
+    await modelStore.dispatchDeleteModel(id);
+    toast.success("Pomyślnie usunięto model", {
+      timeout: 2000,
+    });
+    await getModels();
+  } catch (error) {
+    // Handle error
+  }
+};
+
+const updateModel = async () => {
+  try {
+    selectedModel.value.neededMaterials.forEach((neededMaterial) => {
+      neededMaterial.id = neededMaterial.material.id;
+    });
+    await modelStore.dispatchUpdateModel(selectedModelId, selectedModel.value);
+    toast.success("Pomyślnie zaktualizowano model", {
+      timeout: 2000,
+    });
+    await getModels();
+  } catch (error) {
+    // Handle error
+  }
+};
+
+const handlePagination = ({ page, itemsPerPage }) => {
+  pagination.value.page = page - 1;
+  pagination.value.size = itemsPerPage;
+  getModels();
+};
+
+watch(
+  () => options.value.itemsPerPage,
+  (newVal) => {
+    pagination.value.size = newVal;
+    getModels();
+  }
+);
 
 onMounted(async () => {
-  // Fetch models from the store
-  await modelStore.dispatchGetModels();
-  // Once data is fetched, assign it to the items ref
-  items.value = modelStore.models;
+  await getModels();
 });
 </script>
+
 
 <template>
   <BasePage title="Konstrukcja maszyn">
 
     <template #above-card>
       <!-- Add Model Dialog -->
-      <v-dialog v-model="addDialogVisible" max-width="500">
+      <v-dialog v-model="addDialogVisible" max-width="1000">
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn v-bind="activatorProps" color="primary" class="mb-4" style="max-width: 20rem;" variant="flat">+Dodaj nowy model</v-btn>
+          <v-btn v-bind="activatorProps" color="primary" class="mb-4" style="max-width: 20rem;" variant="flat">+Dodaj
+            nowy model</v-btn>
         </template>
         <v-card title="Dodaj nowy model" rounded="lg">
-          <ModelForm :model-value="modelToAdd" @on-valid-submit="add(), addDialogVisible = false"></ModelForm>
+          <AddModelForm :items="modelToAdd.neededMaterials" :model-value="modelToAdd"
+            @on-valid-submit="add(), addDialogVisible = false"></AddModelForm>
         </v-card>
       </v-dialog>
     </template>
@@ -87,16 +142,15 @@ onMounted(async () => {
     <!-- Edit Model Dialog -->
     <v-dialog v-model="editDialogVisible" max-width="1000">
       <template v-slot:activator="{ props: activatorProps }">
-        <!-- This activator is optional, you can place it where it fits your UI -->
       </template>
       <v-card title="Edytuj model" rounded="lg">
         <EditModelForm :items="selectedModel.neededMaterials" :model-value="selectedModel"
-          @on-close="editDialogVisible = false"></EditModelForm>
+          @on-close="editDialogVisible = false" @on-valid-submit="updateModel"></EditModelForm>
       </v-card>
     </v-dialog>
 
     <v-data-table-server v-model:items-per-page="options.itemsPerPage" :headers="headers" :items="items"
-      :items-length="options.totalItems" :loading="options.loading" item-value="id">
+      :items-length="options.totalItems" :loading="options.loading" item-value="id" @update:options="handlePagination">
       <template v-slot:item.actions="{ item }" dense>
         <v-btn @click="editModel(item)" rounded="lg" size="small" color="primary" class="ml-2" icon>
           <v-icon>mdi-pencil</v-icon>

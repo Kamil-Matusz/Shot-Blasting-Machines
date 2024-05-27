@@ -15,7 +15,6 @@ const validator = useVuelidate(userRules, user);
 const roleStore = useRoleStore();
 
 const dataToSelect = ref([] as any[]);
-const dupa = ref("dupa");
 
 const submit = async () => {
     console.log('submit')
@@ -39,8 +38,6 @@ onMounted(async () => {
 
 </script>
 
-// TODO: Dodawanie użytkownika (value roli na v-select)
-
 <template>
     <v-form class="pa-4" @submit.prevent="submit">
         <validated-text-field :validation-prop="validator.name" label="Nazwa" class="mb-2"></validated-text-field>
@@ -56,7 +53,7 @@ onMounted(async () => {
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" text="Dodaj" color="surface-variant" variant="flat"></v-btn>
+            <v-btn type="submit" text="Dodaj" color="primary" variant="flat"></v-btn>
         </v-card-actions>
     </v-form>
 </template>s

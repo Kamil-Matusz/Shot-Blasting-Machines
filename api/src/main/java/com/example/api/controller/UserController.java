@@ -1,13 +1,9 @@
 package com.example.api.controller;
 
-import com.example.api.dto.AccesoryDTO;
 import com.example.api.dto.UserDTO;
+import com.example.api.dto.UserPasswordUpdateDTO;
 import com.example.api.dto.UserSaveRequestDTO;
-import com.example.api.model.Machine;
-import com.example.api.model.Model;
 import com.example.api.model.User;
-import com.example.api.repository.MachineRepository;
-import com.example.api.repository.ModelRepository;
 import com.example.api.repository.RoleRepository;
 import com.example.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,5 +105,27 @@ public class UserController {
 
         userRepository.delete(user);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<UserDTO> updatePassword(@RequestBody UserPasswordUpdateDTO userPasswordUpdateDTO, @PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (user.getPassword().equals(userPasswordUpdateDTO.getOldPassword()) && userPasswordUpdateDTO.getNewPassword().equals(userPasswordUpdateDTO.getRepeatNewPassword())) {
+            user.setPassword(userPasswordUpdateDTO.getNewPassword());
+
+            userRepository.save(user);
+
+            return new ResponseEntity<>(UserDTO.convertToDTO(user), HttpStatus.OK);
+        }
+        else {
+            System.out.println(userPasswordUpdateDTO);
+
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }

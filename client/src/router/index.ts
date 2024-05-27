@@ -8,6 +8,8 @@ import ConstructionsView from '../views/ConstructionsView.vue'
 import AddOrderView from '@/views/AddOrderView.vue'
 import LoginView from '@/views/LoginView.vue'
 import OrderDetails from '@/views/OrderDetails.vue'
+import ClientView from '@/views/ClientView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +59,16 @@ const router = createRouter({
       path: '/orders/create',
       name: 'add-order',
       component: AddOrderView
+    },
+    {
+      path: '/clients',
+      name: 'clients',
+      component: ClientView
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView
     },
   ]
 })

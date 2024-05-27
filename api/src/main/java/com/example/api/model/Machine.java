@@ -20,8 +20,8 @@ public class Machine {
 
     @ManyToMany
     @JoinTable(
-            name="machines_accesories",
+            name="machines_accessories",
             joinColumns = @JoinColumn(name = "machine_id"),
-            inverseJoinColumns = @JoinColumn(name = "accesory_id"))
-    private List<Accesory> accessories;
+            inverseJoinColumns = @JoinColumn(name = "accessory_id"))
+    private List<Accessory> accessories;
 }

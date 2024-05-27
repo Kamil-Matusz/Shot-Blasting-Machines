@@ -1,20 +1,31 @@
+<script setup lang="ts">
+
+const props = defineProps<{
+    overflowHidden?: boolean
+    noPadding?: boolean
+}>();
+
+const emit = defineEmits(['click']);
+
+</script>
+
 <template>
-    <div class="magicCard">
-        <div class="magicCard-content">
+    <div :class="`magicCard ${noPadding ? 'no-padding' : ''}`" @click="emit('click')">
+        <div :class="`magicCard-content ${overflowHidden ? 'overflow-hidden' : ''}`">
             <slot></slot>
         </div>
     </div>
 </template>
-  
-<script setup lang="ts">
-
-</script>
 
   
 <style>
 :root {
     --bg-color: ;
     --card-color: rgb(23, 23, 23);
+}
+
+.no-padding{
+    padding: 0rem !important;
 }
 
 .card-container:hover .magicCard::after {

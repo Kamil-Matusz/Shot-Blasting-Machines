@@ -34,6 +34,8 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/materials/**")
                 .permitAll()
+                .requestMatchers("/api/orders/**")
+                .permitAll()
                 .requestMatchers("api/login/**", "/register/**")
                 .permitAll()
                 .requestMatchers("/api/accesories/**").hasAnyAuthority("Administrator Systemu")

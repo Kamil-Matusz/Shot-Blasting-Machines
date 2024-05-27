@@ -11,6 +11,7 @@ public class OrderDTO {
     private Double price;
     private String date;
     private String comments;
+    private String state;
     private ClientDTO client;
     private UserDTO user;
     private MachineDTO machine;
@@ -19,6 +20,7 @@ public class OrderDTO {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(order.getId());
         orderDTO.setPrice(order.getPrice());
+        orderDTO.setState(order.getState().getName());
         orderDTO.setDate(order.getDate().toString());
         orderDTO.setComments(order.getComments());
 

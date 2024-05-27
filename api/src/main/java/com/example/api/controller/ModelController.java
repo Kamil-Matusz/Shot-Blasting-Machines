@@ -23,6 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * REST controller for managing models.
+ * <p>
+ * Handles HTTP requests related to models.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/models")
 public class ModelController {
@@ -33,6 +39,11 @@ public class ModelController {
 
     private final MachineRepository machineRepository;
 
+    /**
+     * Constructor of the controller, injecting the model repository.
+     *
+     * @param modelRepository the model repository
+     */
     @Autowired
     public ModelController(ModelRepository modelRepository, MaterialRepository materialRepository, NeededMaterialsRepository neededMaterialsRepository, MachineRepository machineRepository) {
         this.modelRepository = modelRepository;
@@ -41,6 +52,14 @@ public class ModelController {
         this.machineRepository = machineRepository;
     }
 
+    /**
+     * Retrieves a list of all models.
+     * <p>
+     * Mapped to HTTP GET requests for /api/models.
+     * </p>
+     *
+     * @return ResponseEntity containing a list of Model and HTTP status 200 (OK)
+     */
     @GetMapping("")
     public ResponseEntity<Page<Model>> getAllModels(
             @RequestParam(defaultValue = "0") int page,

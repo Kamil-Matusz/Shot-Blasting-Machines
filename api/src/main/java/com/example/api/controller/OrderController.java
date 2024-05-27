@@ -25,6 +25,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.api.dto.OrderDTO.convertToDTO;
+
+/**
+ * REST controller for managing orders.
+ * <p>
+ * Handles HTTP requests related to orders.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -37,6 +45,17 @@ public class OrderController {
     private final ModelRepository modelRepository;
     private final AccessoryRepository accessoryRepository;
 
+    /**
+     * Constructor of the controller, injecting the necessary repositories.
+     *
+     * @param orderRepository the order repository
+     * @param clientRepository the client repository
+     * @param userRepository the user repository
+     * @param machineRepository the machine repository
+     * @param orderStateRepository the order state repository
+     * @param modelRepository the model repository
+     * @param accessoryRepository the accessory repository
+     */
     @Autowired
     public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository) {
         this.orderRepository = orderRepository;
@@ -48,6 +67,15 @@ public class OrderController {
         this.accessoryRepository = accessoryRepository;
     }
 
+    /**
+     * Adds a new order.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders.
+     * </p>
+     *
+     * @param orderSaveRequestDTO the order save request data transfer object
+     * @return ResponseEntity containing the created OrderDTO and HTTP status 201 (Created)
+     */
     @PostMapping("")
     public ResponseEntity<OrderDTO> addOrder(@RequestBody OrderSaveRequestDTO orderSaveRequestDTO) {
         Order order = new Order();
@@ -89,6 +117,14 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Retrieves a list of all orders.
+     * <p>
+     * Mapped to HTTP GET requests for /api/orders.
+     * </p>
+     *
+     * @return ResponseEntity containing a list of OrderDTO and HTTP status 200 (OK)
+     */
     @GetMapping("")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<Order> orders = orderRepository.findAll();

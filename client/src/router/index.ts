@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
-import UsersManagementView from '../views/UsersManagmentView.vue'
+import UsersManagementView from '../views/UsersManagementView.vue'
 import StoreView from '../views/StoreView.vue'
 import OrdersView from '../views/OrdersView.vue'
 import ProductionView from '../views/ProductionView.vue'

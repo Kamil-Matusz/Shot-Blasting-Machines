@@ -2,7 +2,7 @@
 import BasePage from '@/components/pages/BasePage.vue'
 import { useClientsStore } from '@/stores/clientStore'
 import { onMounted, ref } from 'vue'
-import { type Client } from '@/models/client'
+import { type Client, InputCreateClient } from '@/models/client'
 import { useModelStore } from '@/stores/modelStore'
 import { useAccessoryStore } from '@/stores/accessoryStore'
 import type { Model } from '@/models/model'
@@ -11,12 +11,19 @@ import type { Accessory } from '@/models/accessory'
 import { useOrderStore } from '@/stores/orderStore'
 import { InputPagination } from '@/models/paginationParams'
 import { useToast } from 'vue-toastification'
+import ClientForm from '@/components/client/ClientForm.vue';
+import { useRouter } from 'vue-router'
+
+
+const router = useRouter()
 
 const clientStore = useClientsStore()
 const modelStore = useModelStore()
 const accessoryStore = useAccessoryStore()
 const orderStore = useOrderStore()
 const toast = useToast()
+
+const clientToAdd = ref(new InputCreateClient())
 
 const isClientSelected = ref(false)
 
@@ -34,10 +41,14 @@ const confirmClientSelect = () => {
     getModels()
     getAccessories()
   }
+  else {
+    toast.error("Najpierw wybierz klienta!");
+  }
 }
 
 const selectClient = (value: string) => {
   let splitted = value.split('   ')
+
   clientStore.clients.forEach((client: Client) => {
     if (splitted[0] == client.name && splitted[1].slice(1, -1) == client.address) {
       selectedClient.value = client
@@ -92,19 +103,31 @@ const getAccessories = () => {
   accessoryStore.dispatchGetAccesories()
 }
 
+const addClient = async () => {
+  await clientStore.dispatchCreateClient(clientToAdd.value)
+  .then(() => {
+    toast.success("Pomyślnie dodano nowego klienta!");
+    clientToAdd.value = new InputCreateClient();
+  })
+  };
+
 // TODO - Poprawić jak będą dane użytkownika na frontendzie
 const saveOrder = () => {
   if (newOrderToSave.value.model !== 0) {
     newOrderToSave.value.price = price.value
     newOrderToSave.value.date = new Date().toISOString().slice(0, 19).replace('T', ' ').toString()
 
-    newOrderToSave.value.user = 1
+    newOrderToSave.value.user = 1 // Tu do zmiany!
 
     console.log(newOrderToSave.value)
 
     orderStore.dispatchCreateOrder(newOrderToSave.value).then(() => {
       toast.success('Pomyślnie dodano nowe zamówienia!')
+      router.push('/orders')
     })
+  }
+  else {
+    toast.error("Najpierw wybierz model maszyny!")
   }
 }
 
@@ -261,7 +284,16 @@ onMounted(() => {
             title="Rejestracja klienta"
             subtitle="Jeśli klienta jeszcze nie ma w bazie danych możesz go dodać."
           >
-            <v-btn class="ma-3" color="primary"> Dodaj klienta do bazy </v-btn>
+          <v-dialog max-width="500">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn v-bind="activatorProps" color="primary" variant="flat" class="mb-4 ml-4" style="max-width: 20rem;">Dodaj klienta do bazy</v-btn>
+            </template>
+            <template v-slot:default="{ isActive }">
+              <v-card title="Nowy klient" rounded="lg">
+                <ClientForm v-model="clientToAdd" @on-valid-submit="addClient(), isActive.value = false"></ClientForm>
+              </v-card>
+            </template>
+          </v-dialog>
           </v-card>
         </v-col>
 

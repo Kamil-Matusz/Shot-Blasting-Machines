@@ -16,6 +16,7 @@ const toast = useToast()
 const handleChangePassword = () => {
   usersStore.dispatchChangePassword(dataToPasswordChange.value, 1).then(() => {
     toast.success('Pomyślnie zmieniono hasło!')
+    dataToPasswordChange.value = new InputPasswordChange()
   })
 }
 </script>

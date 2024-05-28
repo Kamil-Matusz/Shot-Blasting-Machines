@@ -25,7 +25,6 @@ const headers: ReadonlyHeaders = [
   { title: 'Akcje', key: 'actions', align: 'center', sortable: false }
 ]
 
-//Temporary options to replace with real pagination
 const options = ref({
   itemsPerPage: pagination.value.size,
   loading: true,
@@ -125,14 +124,41 @@ const handlePagination = ({ page, itemsPerPage }) => {
           icon="mdi-pen"
         ></v-btn>
 
-        <v-btn
-          @click="deleteUser(item.id)"
-          rounded="lg"
-          size="small"
-          color="red"
-          class="ml-2"
-          icon="mdi-delete"
-        ></v-btn>
+        <v-dialog max-width="500">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-btn
+              rounded="lg"
+              size="small"
+              color="red"
+              v-bind="activatorProps"
+              class="ml-2"
+              icon="mdi-delete"
+            ></v-btn>
+          </template>
+
+          <template v-slot:default="{ isActive }">
+            <v-card title="Confirm your decision">
+              <v-card-text>
+                Are you sure you want to delete this user?
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn
+                  text="Delete user"
+                  color="red"
+                  rounded="lg"
+                  @click="() => {isActive.value = false; deleteUser(item.id)}"
+                ></v-btn>
+              </v-card-actions>
+            </v-card>
+          </template>
+        </v-dialog>
+
+
+
+
       </template>
     </v-data-table-server>
 

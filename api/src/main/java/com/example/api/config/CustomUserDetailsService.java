@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Service for loading user-specific data.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -20,6 +23,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Loads the user details by username (email).
+     *
+     * @param email the email of the user to be loaded
+     * @return the {@link UserDetails} of the user
+     * @throws UsernameNotFoundException if the user with the given email is not found
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)

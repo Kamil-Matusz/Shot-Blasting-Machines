@@ -12,6 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Retrieves a list of all machines.
+ * <p>
+ * Mapped to HTTP GET requests for /api/machines.
+ * </p>
+ *
+ * @return ResponseEntity containing a list of Machine and HTTP status 200 (OK)
+ */
 @RestController
 @RequestMapping("/api/machines")
 public class MachineController {

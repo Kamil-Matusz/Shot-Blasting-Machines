@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing users.
+ * <p>
+ * Handles HTTP requests related to users.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -25,12 +31,28 @@ public class UserController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
+    /**
+     * Constructor of the controller, injecting the necessary repositories.
+     *
+     * @param userRepository the user repository
+     * @param roleRepository the role repository
+     */
     @Autowired
     public UserController(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
 
+    /**
+     * Retrieves a paginated list of users.
+     * <p>
+     * Mapped to HTTP GET requests for /api/users.
+     * </p>
+     *
+     * @param page the page number to retrieve (default is 0)
+     * @param size the number of users per page (default is 10)
+     * @return a paginated list of UserDTO objects
+     */
     @GetMapping("")
     public Page<UserDTO> getUsers(@RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "10") int size) {
@@ -46,6 +68,15 @@ public class UserController {
         return new PageImpl<>(usersDTOs, pageable, usersPage.getTotalElements());
     }
 
+    /**
+     * Saves a new user.
+     * <p>
+     * Mapped to HTTP POST requests for /api/users.
+     * </p>
+     *
+     * @param userSaveRequestDTO the data transfer object containing user information
+     * @return ResponseEntity containing the created UserDTO and HTTP status 200 (OK)
+     */
     @PostMapping("")
     public ResponseEntity<UserDTO> saveUser(@RequestBody UserSaveRequestDTO userSaveRequestDTO) {
 
@@ -66,6 +97,16 @@ public class UserController {
         return new ResponseEntity<>(UserDTO.convertToDTO(user), HttpStatus.OK);
     }
 
+    /**
+     * Updates an existing user.
+     * <p>
+     * Mapped to HTTP PUT requests for /api/users/{id}.
+     * </p>
+     *
+     * @param userSaveRequestDTO the data transfer object containing updated user information
+     * @param id the ID of the user to update
+     * @return ResponseEntity containing the updated UserDTO and HTTP status 200 (OK)
+     */
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserSaveRequestDTO userSaveRequestDTO, @PathVariable Long id) {
 
@@ -94,6 +135,15 @@ public class UserController {
         return new ResponseEntity<>(UserDTO.convertToDTO(user), HttpStatus.OK);
     }
 
+    /**
+     * Deletes an existing user.
+     * <p>
+     * Mapped to HTTP DELETE requests for /api/users/{id}.
+     * </p>
+     *
+     * @param id the ID of the user to delete
+     * @return ResponseEntity with HTTP status 204 (No Content) if successful, or 404 (Not Found) if user is not found
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
 

@@ -6,6 +6,12 @@ import lombok.Data;
 import java.sql.Blob;
 import java.time.LocalDateTime;
 
+/**
+ * Represents an order entity.
+ * <p>
+ * Order represents a purchase or request made by a client for a machine.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="orders")

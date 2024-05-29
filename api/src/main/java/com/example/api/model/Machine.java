@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a machine entity.
+ * <p>
+ * A machine is a device that uses power to apply forces and control movement to perform an intended action.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="machines")

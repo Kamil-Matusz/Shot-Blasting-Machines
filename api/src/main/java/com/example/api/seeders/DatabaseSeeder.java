@@ -17,6 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * Component responsible for seeding the database with initial data.
+ */
 @Component
 public class DatabaseSeeder implements ApplicationRunner {
 
@@ -29,6 +32,12 @@ public class DatabaseSeeder implements ApplicationRunner {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Runs the database seeding process at application startup.
+     *
+     * @param args command-line arguments passed to the application
+     * @throws Exception if an error occurs during the seeding process
+     */
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
@@ -42,6 +51,11 @@ public class DatabaseSeeder implements ApplicationRunner {
         }
     }
 
+    /**
+     * Checks if the models table is empty.
+     *
+     * @return true if the models table is empty, false otherwise
+     */
     private boolean modelsNotExists() {
         Long count = entityManager.createQuery("SELECT COUNT(m) FROM Model m", Long.class)
                 .getSingleResult();

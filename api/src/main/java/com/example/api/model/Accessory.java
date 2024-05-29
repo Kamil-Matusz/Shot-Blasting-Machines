@@ -5,6 +5,13 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents an accessory entity.
+ * <p>
+ * An accessory is an additional item or feature that can be associated with one or more machines.
+ * </p>
+ */
+
 @Entity
 @Data
 @Table(name="accessories")

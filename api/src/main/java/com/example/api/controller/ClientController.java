@@ -18,17 +18,36 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for managing clients.
+ * <p>
+ * Handles HTTP requests related to clients.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/clients")
 public class ClientController {
 
     private final ClientRepository clientRepository;
 
+    /**
+     * Constructor of the controller, injecting the client repository.
+     *
+     * @param clientRepository the client repository
+     */
     @Autowired
     public ClientController(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
+    /**
+     * Retrieves a list of all clients.
+     * <p>
+     * Mapped to HTTP GET requests for /api/clients.
+     * </p>
+     *
+     * @return ResponseEntity containing a list of ClientDTO and HTTP status 200 (OK)
+     */
     @GetMapping("")
     public Page<ClientDTO> getAllClients(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size) {

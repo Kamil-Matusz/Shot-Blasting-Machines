@@ -1,0 +1,11 @@
+com.example.api
+com.example.api.config
+com.example.api.controller
+com.example.api.controllersTests
+com.example.api.dto
+com.example.api.model
+com.example.api.repositoriesTests
+com.example.api.repository
+com.example.api.seeders
+com.example.api.service
+com.example.api.utils

@@ -28,7 +28,7 @@ public class SeedersIntegrationTests {
     @Autowired
     private MaterialRepository materialRepository;
     @Autowired
-    private AccesoryRepository accesoryRepository;
+    private AccessoryRepository accesoryRepository;
     @Autowired
     private ModelRepository modelRepository;
     @Autowired
@@ -60,7 +60,7 @@ public class SeedersIntegrationTests {
 
     @Test
     public void accessorySedersTests() {
-        List<Accesory> entities = accesoryRepository.findAll();
+        List<Accessory> entities = accesoryRepository.findAll();
         assertThat(entities).hasSize(1);
     }
 

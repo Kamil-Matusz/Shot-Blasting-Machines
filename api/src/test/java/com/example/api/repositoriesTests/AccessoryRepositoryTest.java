@@ -1,9 +1,8 @@
 package com.example.api.repositoriesTests;
 
-import com.example.api.model.Accesory;
-import com.example.api.model.Client;
-import com.example.api.repository.AccesoryRepository;
-import com.example.api.repository.ClientRepository;
+
+import com.example.api.model.Accessory;
+import com.example.api.repository.AccessoryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AccessoryRepositoryTest {
 
     @Autowired
-    private AccesoryRepository accesoryRepository;
+    private AccessoryRepository accesoryRepository;
 
     @Test
     public void findAllClients() {
-        List<Accesory> accesories = accesoryRepository.findAll();
+        List<Accessory> accesories = accesoryRepository.findAll();
         assertThat(accesories).isNotNull();
         assertThat(accesories).hasSizeGreaterThan(0);
     }
@@ -33,7 +32,7 @@ public class AccessoryRepositoryTest {
     @Test
     public void findClientById() {
         Long accessoryId = 1L;
-        Accesory accesory = accesoryRepository.findById(accessoryId).orElse(null);
+        Accessory accesory = accesoryRepository.findById(accessoryId).orElse(null);
         assertThat(accessoryId).isNotNull();
     }
 }

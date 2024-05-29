@@ -9,6 +9,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a model entity.
+ * <p>
+ * A model represents a specific design or specification of a product.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="models")

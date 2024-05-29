@@ -6,6 +6,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Represents a needed materials entity.
+ * <p>
+ * NeededMaterials represents the required materials for a specific model.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="needed_materials")

@@ -6,6 +6,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Represents an order state entity.
+ * <p>
+ * OrderState represents the different states that an order can have,
+ * such as "Pending", "Processing", "Shipped", etc.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="order_states")

@@ -7,6 +7,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a material entity.
+ * <p>
+ * A material is a substance that occurs naturally in the Earth's crust or can be synthesized.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="materials")

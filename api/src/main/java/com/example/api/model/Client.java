@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a client entity.
+ * <p>
+ * A client is an individual or organization that purchases products or services from a business.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="clients")

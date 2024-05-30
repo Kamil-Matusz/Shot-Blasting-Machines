@@ -44,5 +44,5 @@ INSERT INTO machines (model_id) VALUES ((SELECT id FROM models WHERE name = 'XXL
 
 INSERT INTO orders (price, date, comments, user_id, client_id, state_id, machine_id)
 VALUES (30000.00, NOW(), 'Zamówienie zakończone', 4,
-        (SELECT id FROM clients WHERE name = 'Jan Kowalski'), (SELECT id FROM order_states WHERE name = 'Skompletowane'),
+        (SELECT id FROM clients WHERE name = 'Jan Kowalski'), (SELECT id FROM order_states WHERE name = 'Zakończone'),
         (SELECT id FROM machines WHERE model_id = (SELECT id FROM models WHERE name = 'Standard')));

@@ -7,13 +7,13 @@ public enum OrderStateEnum {
     TO_BE_CORRECTED(4),
     READY(5),
     COMPLETED(6);
-    private final int value;
+    private final long value;
 
-    OrderStateEnum(int value) {
+    OrderStateEnum(long value) {
         this.value = value;
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 

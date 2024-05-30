@@ -14,7 +14,7 @@ export const API = {
   users: usersStoreController,
   roles: rolesStoreController,
   orders: ordersStoreController,
-  jwt: jwtStoreController
+  jwt: jwtStoreController,
   clients: clientsStoreController,
   accessories: accessoriesStoreController,
 };

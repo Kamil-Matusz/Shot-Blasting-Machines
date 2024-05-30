@@ -4,19 +4,20 @@ import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue';
 import StartProductionDialog from '@/components/production/StartProductionDialog.vue';
 import VerifyQualityDialog from '@/components/production/VerifyQualityDialog.vue';
 import SendToClientDialog from '@/components/production/SendToClientDialog.vue';
+import MarkAsToCheckDialog from '@/components/production/MarkAsToCheckDialog.vue';
 </script>
 
 <template>
   <BasePage title="Produkcja">
 
-    <div class="d-flex flex-wrap w-100 h-100" style="gap: 1rem;">
+    <div class="d-flex flex-wrap w-100" style="gap: 1rem;">
       <div class="min-w-30" style="flex-grow: 3;">
         <v-dialog max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
             <div v-bind="activatorProps">
-              <BaseCardWithHover overflow-hidden cursor="pointer" style="height: 20rem;">
+              <BaseCardWithHover overflow-hidden style="height: 20rem;overflow:hidden">
                 <div class="d-flex justify-center align-center h-100 flex-column cursor-pointer scale-hover">
-                  <div><v-icon size="120">mdi-check</v-icon></div>
+                  <div><v-icon size="120">mdi-forklift</v-icon></div>
                   <p class="text-h5">Przyjmij zamówienie do produkcji</p>
                 </div>
               </BaseCardWithHover>
@@ -30,6 +31,26 @@ import SendToClientDialog from '@/components/production/SendToClientDialog.vue';
           </template>
         </v-dialog>
 
+      </div>
+      <div class="min-w-30" style="flex-grow: 3;">
+        <v-dialog max-width="500">
+          <template v-slot:activator="{ props: activatorProps }">
+            <div v-bind="activatorProps">
+              <BaseCardWithHover overflow-hidden style="height: 20rem;overflow:hidden ">
+                <div class="d-flex justify-center align-center h-100 flex-column cursor-pointer scale-hover">
+                  <div><v-icon size="120">mdi-check</v-icon></div>
+                  <p class="text-h5">Oznacz jako gotowe do sprawdzenia</p>
+                </div>
+              </BaseCardWithHover>
+            </div>
+          </template>
+
+          <template v-slot:default="{ isActive }">
+            <MarkAsToCheckDialog :is-active="isActive">
+            </MarkAsToCheckDialog>
+
+          </template>
+        </v-dialog>
       </div>
       <div class="min-w-30" style="flex-grow: 3;">
         <v-dialog max-width="500">

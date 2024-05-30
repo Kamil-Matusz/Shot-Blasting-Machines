@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,9 +38,10 @@ public class OrderController {
     private final UserRepository userRepository;
     private final ModelRepository modelRepository;
     private final AccessoryRepository accessoryRepository;
+    private final MaterialRepository materialRepository;
 
     @Autowired
-    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository) {
+    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository,MaterialRepository materialRepository) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
@@ -57,9 +59,12 @@ public class OrderController {
                 .filter(order -> {
                     boolean matches = true;
                     if (stateId!= null) {
-                        matches = matches && order.getState().getId().equals(stateId);
+                        if(OrderStateEnum.IN_PRODUCTION.getValue() == stateId) {
+                            matches = order.getState().getId().equals(OrderStateEnum.IN_PRODUCTION.getValue()) || order.getState().getId().equals(OrderStateEnum.TO_BE_CORRECTED.getValue());
+                        } else {
+                            matches = order.getState().getId().equals(stateId);
+                        }
                     }
-                    // Add more filtering logic as needed
                     return matches;
                 })
                 .map(OrderDTO::convertToDTO)
@@ -130,6 +135,12 @@ public class OrderController {
 
         Optional<OrderState> orderState = orderStateRepository.findById((long)OrderStateEnum.IN_PRODUCTION.getValue());
 
+        var neededMaterials = order.getMachine().getModel().getNeededMaterials();
+
+        if (!decreaseMaterials(neededMaterials)) {
+            return new ResponseEntity<>("Niewystarczająca ilośc materiałów",HttpStatus.BAD_REQUEST);
+        }
+
         order.setState(orderState.get());
 
         orderRepository.save(order);
@@ -199,18 +210,28 @@ public class OrderController {
     }
 
     @GetMapping("/{id}/summary")
-    public ResponseEntity<byte[]> getPdfSummary(@PathVariable Long id) {
+    public ResponseEntity<byte[]> getBlobSummary(@PathVariable Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
 
         if (order.getSummary() == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "SummaryOrder#" + id + ".pdf");
-            headers.setContentLength(order.getSummary().length);
-            return new ResponseEntity<>(order.getSummary(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(order.getSummary(), HttpStatus.OK);
         }
     }
+    public boolean decreaseMaterials(List<NeededMaterials> neededMaterials) {
+        for (NeededMaterials neededMaterial : neededMaterials) {
+            Material material = neededMaterial.getMaterial();
+            int requiredAmount = neededMaterial.getAmount();
+
+            if (material.getAmount() < requiredAmount) {
+                return false;
+            }
+
+            material.setAmount(material.getAmount() - requiredAmount);
+            materialRepository.save(material);
+        }
+        return true;
+    }
+
 }

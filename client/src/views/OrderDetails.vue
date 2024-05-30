@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router';
 import BasePage from '@/components/pages/BasePage.vue';
 import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue';
 import { Order } from '../models/order';
+import OrderPdfPreview from '@/components/orders/OrderPdfPreview.vue';
 
 const ordersStore = useOrdersStore();
 const route = useRoute();
@@ -15,19 +16,43 @@ onMounted(async () => {
     if (id) {
         order.value = await ordersStore.dispatchGetOrderByID(id);
     }
-    if (order.value)
-        order.value.machine.accessories = [{ id: 1, name: "Test", price: 120 }, { id: 2, name: "Test2", price: 120 }]
 });
+
+const getColor = (state: string) => {
+    switch (state) {
+        case "Zakończone":
+            return 'green'
+        case "Do poprawy":
+            return 'red'
+        case "W produkcji":
+            return 'primary'
+        case "Do sprawdzenia":
+            return 'orange'
+        case "Nowe":
+            return 'gray'
+        case "Gotowe":
+            return 'blue'
+    }
+}
 </script>
 
 <template>
     <BasePage v-if="order" :title="`Zamówienie nr ${order.id}`">
-        <v-btn class="bottom-right" color="primary" icon="mdi-file"></v-btn>
-        <div class="text-h6 top-right">Cena netto: {{ order.price.toFixed(2) }} PLN</div>
-        <div class="mb-4 d-flex justify-space-between">
-            <v-chip color="primary" size="x-large">{{ order.state }}</v-chip>
+        <v-dialog max-width="500">
+            <template v-slot:activator="{ props: activatorProps }">
+                <v-btn v-bind="activatorProps" class="bottom-right" color="primary" icon="mdi-file"></v-btn>
+            </template>
+            <template v-slot:default="{ isActive }">
+                <v-card>
+                    <OrderPdfPreview :order-id="order.id"></OrderPdfPreview>
+                </v-card>
+            </template>
+        </v-dialog>
 
+        <div class="mb-4 d-flex justify-space-between">
+            <v-chip :color="getColor(order.state)" size="x-large">{{ order.state }}</v-chip>
         </div>
+        <div class="text-h6">Cena netto: {{ order.price.toFixed(2) }} PLN</div>
         <div class="mb-4">
             Data złożenia zamówienia: {{ order.date }}
         </div>
@@ -49,7 +74,6 @@ onMounted(async () => {
                 <p>Numer telefonu:{{ order.client.phoneNumber }}</p>
             </BaseCardWithHover>
             <BaseCardWithHover class="min-w-20 min-h-10" style="flex-grow: 3;">
-                <v-btn class="top-right" color="primary" variant="text" icon="mdi-pencil"></v-btn>
                 <h6 class="text-h6 side-line mb-4" color="primary">
                     Komentarze:
                 </h6>

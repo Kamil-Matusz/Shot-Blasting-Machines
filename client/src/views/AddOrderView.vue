@@ -12,6 +12,7 @@ import { useOrderStore } from '@/stores/orderStore'
 import { InputPagination } from '@/models/paginationParams'
 import { useToast } from 'vue-toastification'
 import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue'
+import ClientForm from '@/components/client/ClientForm.vue';
 
 const clientStore = useClientsStore()
 const modelStore = useModelStore()

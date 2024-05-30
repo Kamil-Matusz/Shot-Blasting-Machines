@@ -4,7 +4,7 @@ import { Order } from '@/models/order';
 import { useOrdersStore } from '@/stores/ordersStore';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'vue-toastification';
-import OrderState from '../../models/orderStates';
+import OrderState from '@/models/orderState';
 import OrderPdfPreview from '@/components/orders/OrderPdfPreview.vue';
 
 

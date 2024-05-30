@@ -78,7 +78,7 @@ const selectedOrder = ref<Order>();
                     <v-icon size="80" color="primary">mdi-check</v-icon>
                     <p class="py-4 text-center">Oznaczono zamówienie jako wymagające poprawek</p>
                     <div class="d-flex">
-                        <v-btn variant="flat" color="primary" text="Zobacz szczegóły zamówienia"></v-btn>
+                        <v-btn v-if="selectedOrder" variant="flat" color="primary" :to="`/orders/${selectedOrder?.id}`" text="Zobacz szczegóły zamówienia"></v-btn>
                         <v-btn @click="closeAll" text="Zamknij"></v-btn>
                     </div>
                 </div>

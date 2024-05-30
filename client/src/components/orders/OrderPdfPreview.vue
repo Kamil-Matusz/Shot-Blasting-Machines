@@ -8,20 +8,15 @@ const props = defineProps<{ orderId: number }>();
 const ordersStore = useOrdersStore();
 
 const orderPDFBlob = await ordersStore.dispatchGetOrderPdfByID(props.orderId);
-var blob = new Blob([orderPDFBlob], { type: 'application/pdf' }); //this make the magic
+var blob = new Blob([orderPDFBlob], { type: 'application/pdf' });
 const orderPDFUrl = URL.createObjectURL(blob);
-//const { pdf, pages } = usePDF(orderPDFUrl);
-// const a = document.createElement('a');
-// a.href = orderPDFUrl;
-// a.target = '_blank';
-// a.click();
 
 const pdfIframe = ref(null)
 
 onMounted(() => {
     if (pdfIframe.value) {
-        pdfIframe.value.addEventListener('load', () => {
-            const pdfDocument = pdfIframe.value.contentDocument;
+        (pdfIframe.value as any).addEventListener('load', () => {
+            const pdfDocument = (pdfIframe.value as any).contentDocument;
             if (pdfDocument) {
                 const pdfBody = pdfDocument.querySelector('body');
                 if (pdfBody) {

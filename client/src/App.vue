@@ -17,13 +17,15 @@ const handleMouseMove = (e: MouseEvent) => {
 
 <template>
   <Navigation></Navigation>
-  <router-view v-slot="{ Component, route }">
-    <div class="card-container" @mousemove="handleMouseMove" ref="cardContainer">
-      <Transition name="slide" mode="out-in">
-        <component :key="route.name" :is="Component"></component>
-      </Transition>
-    </div>
-  </router-view>
+  <Suspense>
+    <router-view v-slot="{ Component, route }">
+      <div class="card-container" @mousemove="handleMouseMove" ref="cardContainer">
+        <Transition name="slide" mode="out-in">
+          <component :key="route.name" :is="Component"></component>
+        </Transition>
+      </div>
+    </router-view>
+  </Suspense>
 </template>
 
 <style>

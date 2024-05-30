@@ -22,7 +22,7 @@ const headers: ReadonlyHeaders = [
   { title: 'Nazwa', key: 'name', align: 'start' },
   { title: 'Cena', key: 'price', align: 'end' },
   { title: 'Ilość', key: 'amount', align: 'center', width: "200px" },
-  { title: 'Akcje', key: 'actions', align: 'end',width:"50px" },
+  { title: 'Akcje', key: 'actions', align: 'end', width: "50px" },
 ]
 
 //Temporary options to replace with real pagination 
@@ -70,7 +70,8 @@ onMounted(async () => {
     <template #above-card>
       <v-dialog max-width="500">
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn v-bind="activatorProps" color="primary" variant="flat" style="width: 20rem" class="mb-4">+Dodaj nowy materiał</v-btn>
+          <v-btn v-bind="activatorProps" color="primary" variant="flat" style="width: 20rem" class="mb-4">+Dodaj nowy
+            materiał</v-btn>
         </template>
 
         <template v-slot:default="{ isActive }">
@@ -127,6 +128,9 @@ onMounted(async () => {
           </v-dialog>
         </div>
 
+      </template>
+      <template v-slot:item.price="{ item }" dense>
+        {{ item.price }} PLN
       </template>
       <template v-slot:item.actions="{ item }" dense>
         <v-btn @click="deleteMaterial(item.id)" rounded="lg" size="small" color="red" class="ml-2"

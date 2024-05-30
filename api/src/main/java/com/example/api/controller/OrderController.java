@@ -1,7 +1,7 @@
 package com.example.api.controller;
 
-import com.example.api.dto.OrderDTO;
-import com.example.api.dto.OrderSaveRequestDTO;
+import com.example.api.dto.*;
+import com.example.api.dto.params.OrderParams;
 import com.example.api.model.*;
 import com.example.api.repository.*;
 import com.example.api.utils.PdfGenerator;
@@ -13,6 +13,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.api.dto.OrderDTO.convertToDTO;
@@ -44,20 +46,24 @@ public class OrderController {
     private final UserRepository userRepository;
     private final ModelRepository modelRepository;
     private final AccessoryRepository accessoryRepository;
+    private final MaterialRepository materialRepository;
 
     /**
      * Constructor of the controller, injecting the necessary repositories.
      *
-     * @param orderRepository the order repository
-     * @param clientRepository the client repository
-     * @param userRepository the user repository
-     * @param machineRepository the machine repository
+     * @param orderRepository      the order repository
+     * @param clientRepository     the client repository
+     * @param userRepository       the user repository
+     * @param machineRepository    the machine repository
      * @param orderStateRepository the order state repository
-     * @param modelRepository the model repository
-     * @param accessoryRepository the accessory repository
+     * @param modelRepository      the model repository
+     * @param accessoryRepository  the accessory repository
      */
     @Autowired
-    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository, UserRepository userRepository, MachineRepository machineRepository, OrderStateRepository orderStateRepository, ModelRepository modelRepository, AccessoryRepository accessoryRepository) {
+    public OrderController(OrderRepository orderRepository, ClientRepository clientRepository,
+            UserRepository userRepository, MachineRepository machineRepository,
+            OrderStateRepository orderStateRepository, ModelRepository modelRepository,
+            AccessoryRepository accessoryRepository, MaterialRepository materialRepository) {
         this.orderRepository = orderRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
@@ -65,6 +71,51 @@ public class OrderController {
         this.orderStateRepository = orderStateRepository;
         this.modelRepository = modelRepository;
         this.accessoryRepository = accessoryRepository;
+        this.materialRepository = materialRepository;
+    }
+
+    /**
+     * Retrieves a list of all orders.
+     * <p>
+     * Mapped to HTTP GET requests for /api/orders.
+     * </p>
+     *
+     * @return ResponseEntity containing a list of OrderDTO and HTTP status 200 (OK)
+     */
+    @GetMapping("")
+    public ResponseEntity<List<OrderDTO>> getAllOrders(@RequestParam(required = false) Long stateId) {
+        List<Order> orders = orderRepository.findAll();
+
+        List<OrderDTO> orderDTOs = orders.stream()
+                .filter(order -> {
+                    boolean matches = true;
+                    if (stateId != null) {
+                        if (OrderStateEnum.IN_PRODUCTION.getValue() == stateId) {
+                            matches = order.getState().getId().equals(OrderStateEnum.IN_PRODUCTION.getValue())
+                                    || order.getState().getId().equals(OrderStateEnum.TO_BE_CORRECTED.getValue());
+                        } else {
+                            matches = order.getState().getId().equals(stateId);
+                        }
+                    }
+                    return matches;
+                })
+                .map(OrderDTO::convertToDTO)
+
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(orderDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+
+        if (!order.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        OrderDTO orderdto = order.map(OrderDTO::convertToDTO).get();
+
+        return new ResponseEntity<>(orderdto, HttpStatus.OK);
     }
 
     /**
@@ -74,7 +125,8 @@ public class OrderController {
      * </p>
      *
      * @param orderSaveRequestDTO the order save request data transfer object
-     * @return ResponseEntity containing the created OrderDTO and HTTP status 201 (Created)
+     * @return ResponseEntity containing the created OrderDTO and HTTP status 201
+     *         (Created)
      */
     @PostMapping("")
     public ResponseEntity<OrderDTO> addOrder(@RequestBody OrderSaveRequestDTO orderSaveRequestDTO) {
@@ -87,7 +139,8 @@ public class OrderController {
         order.setPrice(orderSaveRequestDTO.getPrice());
         order.setComments(orderSaveRequestDTO.getComments());
 
-        Model model = modelRepository.findById(orderSaveRequestDTO.getModel()).orElseThrow(() -> new RuntimeException("Model not found"));
+        Model model = modelRepository.findById(orderSaveRequestDTO.getModel())
+                .orElseThrow(() -> new RuntimeException("Model not found"));
 
         Machine newMachine = new Machine();
         newMachine.setModel(model);
@@ -99,13 +152,16 @@ public class OrderController {
 
         order.setMachine(newMachine);
 
-        Client client = clientRepository.findById(orderSaveRequestDTO.getClient()).orElseThrow(() -> new RuntimeException("Client not found"));
+        Client client = clientRepository.findById(orderSaveRequestDTO.getClient())
+                .orElseThrow(() -> new RuntimeException("Client not found"));
         order.setClient(client);
 
-        User user = userRepository.findById(orderSaveRequestDTO.getUser()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(orderSaveRequestDTO.getUser())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         order.setUser(user);
 
-        OrderState orderState = orderStateRepository.findById(1L).orElseThrow(() -> new RuntimeException("Order state not found"));
+        OrderState orderState = orderStateRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Order state not found"));
         order.setState(orderState);
 
         orderRepository.save(order);
@@ -117,38 +173,127 @@ public class OrderController {
         return new ResponseEntity<>(orderDTO, HttpStatus.CREATED);
     }
 
-    /**
-     * Retrieves a list of all orders.
-     * <p>
-     * Mapped to HTTP GET requests for /api/orders.
-     * </p>
-     *
-     * @return ResponseEntity containing a list of OrderDTO and HTTP status 200 (OK)
-     */
-    @GetMapping("")
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
+    @PostMapping("/{id}/start-production")
+    public ResponseEntity startProduction(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (!optionalOrder.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        List<OrderDTO> orderDTOs = orders.stream()
-                .map(OrderDTO::convertToDTO)
-                .collect(Collectors.toList());
+        Order order = optionalOrder.get();
+        if (order.getState().getId() != (long) OrderStateEnum.NEW.getValue())
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(orderDTOs, HttpStatus.OK);
+        Optional<OrderState> orderState = orderStateRepository.findById((long) OrderStateEnum.IN_PRODUCTION.getValue());
+
+        var neededMaterials = order.getMachine().getModel().getNeededMaterials();
+
+        if (!decreaseMaterials(neededMaterials)) {
+            return new ResponseEntity<>("Niewystarczająca ilośc materiałów", HttpStatus.BAD_REQUEST);
+        }
+
+        order.setState(orderState.get());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/to-check")
+    public ResponseEntity markAsReadyToCheck(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (!optionalOrder.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Order order = optionalOrder.get();
+        if (order.getState().getId() != (long) OrderStateEnum.IN_PRODUCTION.getValue() &&
+                order.getState().getId() != (long) OrderStateEnum.TO_BE_CORRECTED.getValue())
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<OrderState> orderState = orderStateRepository.findById((long) OrderStateEnum.TO_BE_CHECKED.getValue());
+        order.setState(orderState.get());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/send-to-client")
+    public ResponseEntity sendToClient(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (!optionalOrder.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Order order = optionalOrder.get();
+
+        if (order.getState().getId() != (long) OrderStateEnum.NEW.getValue())
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<OrderState> orderState = orderStateRepository.findById((long) OrderStateEnum.COMPLETED.getValue());
+        order.setState(orderState.get());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/quality-confirm")
+    public ResponseEntity qualityConfirm(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (!optionalOrder.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Order order = optionalOrder.get();
+
+        if (order.getState().getId() != (long) OrderStateEnum.IN_PRODUCTION.getValue())
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<OrderState> orderState = orderStateRepository.findById((long) OrderStateEnum.READY.getValue());
+        order.setState(orderState.get());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/quality-decline")
+    public ResponseEntity qualityDecline(@PathVariable Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (!optionalOrder.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        Order order = optionalOrder.get();
+
+        if (order.getState().getId() != (long) OrderStateEnum.IN_PRODUCTION.getValue())
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<OrderState> orderState = orderStateRepository
+                .findById((long) OrderStateEnum.TO_BE_CORRECTED.getValue());
+        order.setState(orderState.get());
+
+        orderRepository.save(order);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}/summary")
-    public ResponseEntity<byte[]> getPdfSummary(@PathVariable Long id) {
+    public ResponseEntity<byte[]> getBlobSummary(@PathVariable Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
 
         if (order.getSummary() == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "SummaryOrder#" + id + ".pdf");
-            headers.setContentLength(order.getSummary().length);
-            return new ResponseEntity<>(order.getSummary(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(order.getSummary(), HttpStatus.OK);
         }
     }
+
+    public boolean decreaseMaterials(List<NeededMaterials> neededMaterials) {
+        for (NeededMaterials neededMaterial : neededMaterials) {
+            Material material = neededMaterial.getMaterial();
+            int requiredAmount = neededMaterial.getAmount();
+
+            if (material.getAmount() < requiredAmount) {
+                return false;
+            }
+
+            material.setAmount(material.getAmount() - requiredAmount);
+            materialRepository.save(material);
+        }
+        return true;
+    }
+
 }

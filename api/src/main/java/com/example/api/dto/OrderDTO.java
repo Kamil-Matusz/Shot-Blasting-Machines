@@ -24,8 +24,9 @@ public class OrderDTO {
 
     /** Comments or notes related to the order. */
     private String comments;
-
-    /** The client associated with the order. */
+     /** Current order state */
+    private String state;
+     /** The client associated with the order. */
     private ClientDTO client;
 
     /** The user who placed the order. */
@@ -44,6 +45,7 @@ public class OrderDTO {
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(order.getId());
         orderDTO.setPrice(order.getPrice());
+        orderDTO.setState(order.getState().getName());
         orderDTO.setDate(order.getDate().toString());
         orderDTO.setComments(order.getComments());
 

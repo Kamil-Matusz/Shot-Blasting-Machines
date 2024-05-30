@@ -9,6 +9,7 @@ export interface Order {
     comments:string
     client:Client
     user:User
+    state: string
     machine:Machine
 }
 

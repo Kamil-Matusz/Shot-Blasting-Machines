@@ -17,7 +17,11 @@ export function addErrorInterceptor(axiosInstance: Axios) {
                         break;
                     case 401:
                         toast.error("Bład autoryzacji");
-                        router.push('/login')
+                        router.push('/')
+                        break;
+                    case 403:
+                        toast.error("Brak dostępu");
+                        router.push('/')
                         break;
                     case 404:
                         toast.error("Nieznaleziono");

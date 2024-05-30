@@ -61,7 +61,7 @@ public class SeedersIntegrationTests {
     @Test
     public void accessorySedersTests() {
         List<Accessory> entities = accesoryRepository.findAll();
-        assertThat(entities).hasSize(1);
+        assertThat(entities).hasSize(2);
     }
 
     @Test

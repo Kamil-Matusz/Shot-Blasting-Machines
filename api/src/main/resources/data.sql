@@ -24,10 +24,12 @@ INSERT INTO materials (name, price, amount) VALUES ('Naklejka', 0.05, 4000);
 INSERT INTO materials (name, price, amount) VALUES ('Panel HMI', 400.00, 100);
 INSERT INTO materials (name, price, amount) VALUES ('Stycznik', 29.00, 700);
 
-INSERT INTO order_states (name) VALUES ('Przyjęte');
-INSERT INTO order_states (name) VALUES ('Skompletowane');
-INSERT INTO order_states (name) VALUES ('Wysłane');
-INSERT INTO order_states (name) VALUES ('Odebrane');
+INSERT INTO order_states (name) VALUES ('Nowe');
+INSERT INTO order_states (name) VALUES ('W produkcji');
+INSERT INTO order_states (name) VALUES ('Do sprawdzenia');
+INSERT INTO order_states (name) VALUES ('Do poprawy');
+INSERT INTO order_states (name) VALUES ('Gotowe');
+INSERT INTO order_states (name) VALUES ('Zakończone');
 
 INSERT INTO accessories (name, price) VALUES ('Zawieszka', 50.00);
 INSERT INTO accessories (name, price) VALUES ('Hak holowniczy', 250.00);
@@ -42,5 +44,5 @@ INSERT INTO machines (model_id) VALUES ((SELECT id FROM models WHERE name = 'XXL
 
 INSERT INTO orders (price, date, comments, user_id, client_id, state_id, machine_id)
 VALUES (30000.00, NOW(), 'Zamówienie zakończone', 4,
-        (SELECT id FROM clients WHERE name = 'Jan Kowalski'), (SELECT id FROM order_states WHERE name = 'Skompletowane'),
+        (SELECT id FROM clients WHERE name = 'Jan Kowalski'), (SELECT id FROM order_states WHERE name = 'Zakończone'),
         (SELECT id FROM machines WHERE model_id = (SELECT id FROM models WHERE name = 'Standard')));

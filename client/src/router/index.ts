@@ -7,6 +7,7 @@ import ProductionView from '../views/ProductionView.vue'
 import ConstructionsView from '../views/ConstructionsView.vue'
 import AddOrderView from '@/views/AddOrderView.vue'
 import LoginView from '@/views/LoginView.vue'
+import OrderDetails from '@/views/OrderDetails.vue'
 import ClientView from '@/views/ClientView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 
@@ -43,6 +44,11 @@ const router = createRouter({
       path: '/orders',
       name: 'orders',
       component: OrdersView
+    },
+    {
+      path: '/orders/:id',
+      name: 'Order',
+      component: OrderDetails,
     },
     {
       path: '/constructions',

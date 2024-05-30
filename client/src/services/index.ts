@@ -13,8 +13,8 @@ export const API = {
   models: modelsStoreController,
   users: usersStoreController,
   roles: rolesStoreController,
+  orders: ordersStoreController,
   jwt: jwtStoreController,
   clients: clientsStoreController,
   accessories: accessoriesStoreController,
-  orders: ordersStoreController
 };

@@ -1,20 +1,37 @@
+<script setup lang="ts">
+
+const props = defineProps<{
+    overflowHidden?: boolean
+    noPadding?: boolean
+    title?: string
+    subtitle?: string
+}>();
+
+const emit = defineEmits(['click']);
+
+</script>
+
 <template>
-    <div class="magicCard">
-        <div class="magicCard-content">
+    <div :class="`magicCard ${noPadding ? 'no-padding' : ''}`" @click="emit('click')">
+        <div :class="`magicCard-content ${overflowHidden ? 'overflow-hidden' : ''}`">
+            <h6 v-if="title" class="text-h6 side-line mb-4" color="primary">
+                {{ title }}
+            </h6>
+            <p class="text-body mb-4" v-if="subtitle">{{ subtitle }}</p>
             <slot></slot>
         </div>
     </div>
 </template>
-  
-<script setup lang="ts">
-
-</script>
 
   
 <style>
 :root {
     --bg-color: ;
     --card-color: rgb(23, 23, 23);
+}
+
+.no-padding {
+    padding: 0rem !important;
 }
 
 .card-container:hover .magicCard::after {
@@ -31,8 +48,7 @@
     display: flex;
     flex-direction: column;
     position: relative !important;
-    padding: 1rem;
-    height: 100%;
+    padding: 2px;
 }
 
 .magicCard::before,
@@ -72,7 +88,6 @@
     flex-grow: 1;
     inset: 1px;
     padding: 1rem;
-    position: absolute;
     z-index: 2;
     overflow: auto;
 }

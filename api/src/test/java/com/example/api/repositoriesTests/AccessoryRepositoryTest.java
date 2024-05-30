@@ -1,8 +1,9 @@
 package com.example.api.repositoriesTests;
 
-
 import com.example.api.model.Accessory;
+import com.example.api.model.Client;
 import com.example.api.repository.AccessoryRepository;
+import com.example.api.repository.ClientRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,11 +11,7 @@ import type { Accessory } from '@/models/accessory'
 import { useOrderStore } from '@/stores/orderStore'
 import { InputPagination } from '@/models/paginationParams'
 import { useToast } from 'vue-toastification'
-import ClientForm from '@/components/client/ClientForm.vue';
-import { useRouter } from 'vue-router'
-
-
-const router = useRouter()
+import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue'
 
 const clientStore = useClientsStore()
 const modelStore = useModelStore()
@@ -139,7 +135,7 @@ onMounted(() => {
 <template>
   <template v-if="isClientSelected">
     <BasePage title="Dodaj zamówienie">
-      <v-card class="mb-5" variant="outlined" title="Klient">
+      <BaseCardWithHover class="mb-5" variant="outlined" title="Klient">
         <v-table class="ml-4 mr-4 mb-4">
           <thead>
             <tr>
@@ -160,19 +156,19 @@ onMounted(() => {
             </tr>
           </tbody>
         </v-table>
-      </v-card>
+      </BaseCardWithHover>
 
-      <v-card
+      <BaseCardWithHover
         class="mb-5"
         title="Koszt"
         subtitle="Poniżej znajduje się przybliżona wartość zamówienia."
         variant="outlined"
       >
         <h1 class="mb-4 text-center">{{ price }} PLN</h1>
-      </v-card>
+      </BaseCardWithHover>
       <v-row>
         <v-col cols="12" lg="6">
-          <v-card
+          <BaseCardWithHover
             class="mb-5"
             variant="outlined"
             title="Śrutownica"
@@ -186,9 +182,9 @@ onMounted(() => {
               "
               @update:modelValue="selectModel"
             />
-          </v-card>
+          </BaseCardWithHover>
 
-          <v-card
+          <BaseCardWithHover
             variant="outlined"
             title="Personalizacja"
             subtitle="Wybierz elementy, które życzy sobie klient."
@@ -202,18 +198,18 @@ onMounted(() => {
               :key="accessory.id"
               @change="(event: any) => changeCheckbox(event.srcElement.checked, accessory.id)"
             />
-          </v-card>
+          </BaseCardWithHover>
         </v-col>
         <v-col cols="12" lg="6">
-          <v-card
+          <BaseCardWithHover
             class="mb-5"
             title="Uwagi"
             subtitle="Zapytaj klienta o dodatkowe uwagi."
             variant="outlined"
           >
             <v-textarea class="ml-4 mr-4" v-model="newOrderToSave.comments" clearable />
-          </v-card>
-          <v-card
+          </BaseCardWithHover>
+          <BaseCardWithHover
             title="Podsumowanie"
             subtitle="Przedstaw klientowi wszystkie ustawienia i zapisz zamówienie."
             variant="outlined"
@@ -230,7 +226,7 @@ onMounted(() => {
               @click="saveOrder"
               variant="flat"
             ></v-btn>
-          </v-card>
+          </BaseCardWithHover>
         </v-col>
       </v-row>
     </BasePage>
@@ -238,7 +234,7 @@ onMounted(() => {
 
   <template v-else>
     <BasePage title="Wybierz klienta">
-      <v-card class="mb-5" variant="outlined" title="Klient" subtitle="Wybierz klienta z listy.">
+      <BaseCardWithHover class="mb-5" variant="outlined" title="Klient" subtitle="Wybierz klienta z listy.">
         <v-select
           class="ml-4 mr-4"
           variant="outlined"
@@ -247,9 +243,9 @@ onMounted(() => {
           "
           @update:modelValue="selectClient"
         ></v-select>
-      </v-card>
+      </BaseCardWithHover>
 
-      <v-card
+      <BaseCardWithHover
         class="mb-5"
         variant="outlined"
         title="Informacje o kliencie"
@@ -275,11 +271,11 @@ onMounted(() => {
             </tr>
           </tbody>
         </v-table>
-      </v-card>
+      </BaseCardWithHover>
 
       <v-row>
         <v-col cols="12" lg="6">
-          <v-card
+          <BaseCardWithHover
             variant="outlined"
             title="Rejestracja klienta"
             subtitle="Jeśli klienta jeszcze nie ma w bazie danych możesz go dodać."
@@ -294,17 +290,17 @@ onMounted(() => {
               </v-card>
             </template>
           </v-dialog>
-          </v-card>
+          </BaseCardWithHover>
         </v-col>
 
         <v-col cols="12" lg="6">
-          <v-card
+          <BaseCardWithHover
             variant="outlined"
             title="Potwierdzenie"
             subtitle="Potwierdź wybór i przejdź do ekranu zamówienia."
           >
             <v-btn class="ma-3" color="primary" @click="confirmClientSelect"> Potwierdź </v-btn>
-          </v-card>
+          </BaseCardWithHover>
         </v-col>
       </v-row>
     </BasePage>

@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { API } from "../services";
 import { InputJwtToken, InputLoginData, type JwtToken } from '@/models/authorizations';
 import { useToast } from "vue-toastification";
+import type { User } from "@/models/user";
 
 const toast = useToast();
 
@@ -19,7 +20,7 @@ export const useJwtStore = defineStore("JwtStore", () => {
       token.value.jwt = data.jwt;
       localStorage.setItem("jwtToken", data.jwt);
       toast.success("Zalogowano pomyślnie!");
-      
+
       const base64Url = token.value.jwt.split(".")[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -27,6 +28,20 @@ export const useJwtStore = defineStore("JwtStore", () => {
       }).join(''));
       const payload = JSON.parse(jsonPayload);
       console.log(payload);
+
+// Create a User object
+const user: User = {
+  id: payload.id,
+  name: payload.name,
+  email: payload.email,
+  role: payload.role // Assuming role is provided as a string and needs to be cast to the enum type
+};
+
+// Save the User object to local storage
+localStorage.setItem("user", JSON.stringify(user));
+
+toast.success("Zalogowano pomyślnie!");
+
     } catch (error: any) { // Określenie typu zmiennej error jako any
       if (error.response && error.response.status === 403) {
         toast.error("Nieprawidłowy adres e-mail lub hasło. Spróbuj ponownie.");

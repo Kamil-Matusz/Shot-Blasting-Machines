@@ -2,6 +2,7 @@ package com.example.api.service;
 
 import com.example.api.config.CustomUserDetailsService;
 import com.example.api.config.JWTUtils;
+import com.example.api.dto.CustomUserDetails;
 import com.example.api.dto.LoginRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class LoginService {
     public ResponseEntity<String> login(LoginRequestDTO loginRequestDTO) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequestDTO.getEmail());
+        final CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequestDTO.getEmail());
         if (userDetails != null) {
             return ResponseEntity.ok(jwtUtils.generateToken(userDetails));
         }

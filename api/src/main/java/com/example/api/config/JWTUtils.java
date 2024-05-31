@@ -1,5 +1,6 @@
 package com.example.api.config;
 
+import com.example.api.dto.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -101,8 +102,13 @@ public class JWTUtils {
      * @param userDetails the user details.
      * @return the generated JWT token.
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        var user = userDetails.getUser();
+        claims.put("id", user.getId());
+        claims.put("name", user.getName());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole());
         return createToken(claims, userDetails);
     }
 

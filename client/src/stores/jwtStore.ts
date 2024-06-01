@@ -4,6 +4,7 @@ import { API } from "../services";
 import { InputJwtToken, InputLoginData, type JwtToken } from '@/models/authorizations';
 import { useToast } from "vue-toastification";
 import type { User } from "@/models/user";
+import router from '@/router';
 
 const toast = useToast();
 
@@ -20,6 +21,7 @@ export const useJwtStore = defineStore("JwtStore", () => {
       token.value.jwt = data.jwt;
       localStorage.setItem("jwtToken", data.jwt);
       toast.success("Zalogowano pomyślnie!");
+      router.push('/dashboard');
 
       const base64Url = token.value.jwt.split(".")[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -51,9 +53,19 @@ toast.success("Zalogowano pomyślnie!");
     }
   }
 
+  function dispatchLogout() {
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("user");
+    token.value.jwt = "";
+    
+    toast.success("Wylogowano pomyślnie.");
+    router.push('/');
+}
+
 
   return {
     dispatchLogin,
+    dispatchLogout,
     token
   };
 });

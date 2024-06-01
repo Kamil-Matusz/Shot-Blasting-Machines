@@ -1,4 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useJwtStore } from '@/stores/jwtStore';
+const { dispatchLogout } = useJwtStore();
+</script>
 
 <template>
   <v-card style="z-index: 100">
@@ -50,7 +53,7 @@
           ></v-list-item>
         </v-list>
         <template v-slot:append>
-          <v-list-item prepend-icon="mdi-logout" title="Wyloguj" class="my-6"></v-list-item>
+          <v-list-item prepend-icon="mdi-logout" @click="dispatchLogout" title="Wyloguj" class="my-6"></v-list-item>
         </template>
       </v-navigation-drawer>
     </v-layout>

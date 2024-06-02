@@ -8,6 +8,7 @@ INSERT INTO users (name, email, password, role_id) VALUES ('Admin', 'admin@blast
 INSERT INTO users (name, email, password, role_id) VALUES ('Kamil Matusz', 'kamilmatusz@test.com', 'password', (SELECT id FROM roles WHERE name = 'Sprzedawca'));
 INSERT INTO users (name, email, password, role_id) VALUES ('Konrad Ryż', 'konradryz@test.com', 'password', (SELECT id FROM roles WHERE name = 'Konstruktor Maszyn'));
 INSERT INTO users (name, email, password, role_id) VALUES ('Jan Papryka', 'janpapryka@test.com', 'password', (SELECT id FROM roles WHERE name = 'Nadzorca Magazynu'));
+INSERT INTO users (name, email, password, role_id) VALUES ('Adrian Myszak', 'adrianmyszak@test.com', 'password', (SELECT id FROM roles WHERE name = 'Pracownik Produkcji'));
 
 INSERT INTO clients (name, email, phone_number, address) VALUES ('Jan Kowalski', 'jankowalski@example.com', '+48123456789', 'Konopnickiej 1, Rzeszów, Polska');
 INSERT INTO clients (name, email, phone_number, address) VALUES ('Paweł Kowal', 'pawelkowal@example.com', '+48987654321', 'Cieplownicza 24, Rzeszów, Polska');

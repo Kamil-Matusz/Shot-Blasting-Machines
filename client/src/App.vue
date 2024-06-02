@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { useJwtStore } from '@/stores/jwtStore';
+import { onMounted } from 'vue';
 import Navigation from './components/layout/Navigation.vue'
+
+const { isJwtTokenExists } = useJwtStore();
 
 const handleMouseMove = (e: MouseEvent) => {
   const cards = document.querySelectorAll('.magicCard');
@@ -13,10 +17,15 @@ const handleMouseMove = (e: MouseEvent) => {
     card.style.setProperty('--mouse-y', `${y}px`);
   });
 };
+
+
+onMounted(() => {
+  isJwtTokenExists();
+});
 </script>
 
 <template>
-  <Navigation></Navigation>
+  <Navigation v-if="isJwtTokenExists() === true"></Navigation>
   <Suspense>
     <router-view v-slot="{ Component, route }">
       <div class="card-container" @mousemove="handleMouseMove" ref="cardContainer">

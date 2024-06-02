@@ -10,6 +10,7 @@ const toast = useToast();
 
 export const useJwtStore = defineStore("JwtStore", () => {
   const token = ref<JwtToken>({ jwt: "" });
+  const isLoggedIn = ref(false); 
 
   //Store private functions that operates on local array to update it after api operations alternatily you can reload whole array with dispatchGetMaterials
 
@@ -21,7 +22,8 @@ export const useJwtStore = defineStore("JwtStore", () => {
       token.value.jwt = data.jwt;
       localStorage.setItem("jwtToken", data.jwt);
       toast.success("Zalogowano pomyślnie!");
-      router.push('/dashboard');
+      isLoggedIn.value = true;
+      router.push('/profile');
 
       const base64Url = token.value.jwt.split(".")[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -57,15 +59,35 @@ toast.success("Zalogowano pomyślnie!");
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("user");
     token.value.jwt = "";
+    isLoggedIn.value = false;
+
     
     toast.success("Wylogowano pomyślnie.");
     router.push('/');
+}
+
+function getUserRole(): string | null {
+  const user = localStorage.getItem("user");
+  if (user) {
+    const userData = JSON.parse(user);
+    return userData.role.name;
+  }
+  return null;
+}
+
+function isJwtTokenExists(): boolean {
+  if (localStorage.getItem("jwtToken") !== null) { isLoggedIn.value = true }
+  console.log("login:", isLoggedIn.value);
+
+  return isLoggedIn.value;
 }
 
 
   return {
     dispatchLogin,
     dispatchLogout,
-    token
+    isJwtTokenExists,
+    token,
+    getUserRole
   };
 });

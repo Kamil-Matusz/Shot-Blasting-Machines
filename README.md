@@ -76,10 +76,10 @@ Dzięki zastosowaniu narzędzia Electron aplikacja będzie uruchamiać się jako
 ![](/assets/ActivityDiagram_V.png)
 
 ## GUI
-![](/assets/profile_GUI.png)
-![](/assets/users_GUI.png)
-![](/assets/orders_GUI.png)
-![](/assets/production_GUI.png)
+![](/assets/profile_GUI.PNG)
+![](/assets/users_GUI.PNG)
+![](/assets/orders_GUI.PNG)
+![](/assets/production_GUI.PNG)
 
 ## Wykorzystane technologie
 - Electron

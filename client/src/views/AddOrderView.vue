@@ -13,13 +13,18 @@ import { InputPagination } from '@/models/paginationParams'
 import { useToast } from 'vue-toastification'
 import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue'
 import ClientForm from '@/components/client/ClientForm.vue';
+import users from '@/services/users'
+import { useJwtStore } from '@/stores/jwtStore'
+import router from '@/router'
 
 const clientStore = useClientsStore()
 const modelStore = useModelStore()
 const accessoryStore = useAccessoryStore()
 const orderStore = useOrderStore()
 const toast = useToast()
+const jwtStore = useJwtStore()
 
+const user = ref({} as User)
 const clientToAdd = ref(new InputCreateClient())
 
 const isClientSelected = ref(false)
@@ -108,13 +113,13 @@ const addClient = async () => {
   })
   };
 
-// TODO - Poprawić jak będą dane użytkownika na frontendzie
+
 const saveOrder = () => {
   if (newOrderToSave.value.model !== 0) {
     newOrderToSave.value.price = price.value
     newOrderToSave.value.date = new Date().toISOString().slice(0, 19).replace('T', ' ').toString()
 
-    newOrderToSave.value.user = 1 // Tu do zmiany!
+    newOrderToSave.value.user = user.value.id;
 
     console.log(newOrderToSave.value)
 
@@ -130,6 +135,7 @@ const saveOrder = () => {
 
 onMounted(() => {
   getClients()
+  user.value = jwtStore.getUser()
 })
 </script>
 
@@ -216,13 +222,12 @@ onMounted(() => {
             variant="outlined"
             class="pb-1"
           >
-            <p class="ml-4 mr-4">
+            <p class="mb-2">
               Jeżeli klient potwierdza złożenia zamówienia, zapisz je w bazie danych.
             </p>
 
             <v-btn
               color="primary"
-              class="ma-5"
               text="Zapisz zamówienie"
               @click="saveOrder"
               variant="flat"
@@ -283,7 +288,7 @@ onMounted(() => {
           >
           <v-dialog max-width="500">
             <template v-slot:activator="{ props: activatorProps }">
-              <v-btn v-bind="activatorProps" color="primary" variant="flat" class="mb-4 ml-4" style="max-width: 20rem;">Dodaj klienta do bazy</v-btn>
+              <v-btn v-bind="activatorProps" color="primary" variant="flat" style="max-width: 20rem;">Dodaj klienta do bazy</v-btn>
             </template>
             <template v-slot:default="{ isActive }">
               <v-card title="Nowy klient" rounded="lg">
@@ -300,7 +305,7 @@ onMounted(() => {
             title="Potwierdzenie"
             subtitle="Potwierdź wybór i przejdź do ekranu zamówienia."
           >
-            <v-btn class="ma-3" color="primary" @click="confirmClientSelect"> Potwierdź </v-btn>
+            <v-btn color="primary" @click="confirmClientSelect"> Potwierdź </v-btn>
           </BaseCardWithHover>
         </v-col>
       </v-row>

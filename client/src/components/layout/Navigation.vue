@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import type { User } from '@/models/user';
 import { useJwtStore } from '@/stores/jwtStore';
-import { onMounted,} from 'vue';
+import { onMounted, ref,} from 'vue';
 
-const { dispatchLogout, getUserRole } = useJwtStore();
+const { dispatchLogout, getUserRole, getUser } = useJwtStore();
+
+const user = ref({} as User);
+
 
 onMounted(() => {
   getUserRole();
+  // @ts-ignore
+  user.value = getUser()
 });
 </script>
 
@@ -16,8 +22,8 @@ onMounted(() => {
         <v-list>
           <v-list-item
             prepend-icon="mdi-account"
-            title="Admin"
-            subtitle="Imie nazwisko"
+            :title="getUserRole()"
+            :subtitle="user.name"
             to="/profile"
           ></v-list-item>
         </v-list>

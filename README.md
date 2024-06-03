@@ -75,11 +75,18 @@ Dzięki zastosowaniu narzędzia Electron aplikacja będzie uruchamiać się jako
 ![](/assets/ActivityDiagram_IV.png)
 ![](/assets/ActivityDiagram_V.png)
 
+## GUI
+![](/assets/profile_GUI.png)
+![](/assets/users_GUI.png)
+![](/assets/orders_GUI.png)
+![](/assets/production_GUI.png)
+
 ## Wykorzystane technologie
 - Electron
 - Java
 - Spring Boot
 - MySQL
+- Hibernate
 - TypeScript
 - Vue.js
 - Gitlab

@@ -1,22 +1,12 @@
 package com.example.api.controller;
 
 import com.example.api.dto.*;
-import com.example.api.dto.params.OrderParams;
 import com.example.api.model.*;
 import com.example.api.repository.*;
 import com.example.api.utils.PdfGenerator;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfDocument;
-import com.itextpdf.text.pdf.PdfWriter;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

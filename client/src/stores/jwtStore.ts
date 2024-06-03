@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { API } from "../services";
-import { InputJwtToken, InputLoginData, type JwtToken } from '@/models/authorizations';
+import { InputLoginData, type JwtToken } from '@/models/authorizations';
 import { useToast } from "vue-toastification";
 import type { User } from "@/models/user";
 import router from '@/router';
+import type { Role } from "@/models/role";
 
 const toast = useToast();
 
@@ -75,6 +76,28 @@ function getUserRole(): string | null {
   return null;
 }
 
+function getUser(): User | null {
+  const user = localStorage.getItem("user");
+  if (user) {
+    const userData = JSON.parse(user);
+
+    const role: Role = {
+      id: userData.role.id,
+      name: userData.role.name,
+    };
+
+    const user_obj: User = {
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+      role: role
+    };
+
+    return user_obj;
+  }
+  return null;
+}
+
 function isJwtTokenExists(): boolean {
   if (localStorage.getItem("jwtToken") !== null) { isLoggedIn.value = true }
   console.log("login:", isLoggedIn.value);
@@ -88,6 +111,7 @@ function isJwtTokenExists(): boolean {
     dispatchLogout,
     isJwtTokenExists,
     token,
-    getUserRole
+    getUserRole,
+    getUser
   };
 });

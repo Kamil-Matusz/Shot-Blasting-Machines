@@ -1,24 +1,33 @@
 <script setup lang="ts">
 import BasePage from '@/components/pages/BasePage.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
-import { InputPasswordChange } from '@/models/user'
+import { InputPasswordChange, type User } from '@/models/user'
 import ChangePasswordForm from '@/components/users/ChangePasswordForm.vue'
 import { useToast } from 'vue-toastification'
+import { useJwtStore } from '@/stores/jwtStore'
 
 const dataToPasswordChange = ref(new InputPasswordChange())
 const usersStore = useUserStore()
+//@ts-ignore
+const user = ref({} as User)
+const jwtStore = useJwtStore();
 
-const toast = useToast()
-
-// TODO: Poprawić jak będą dane użytkownika na frontendzie
+const toast = useToast();
 
 const handleChangePassword = () => {
-  usersStore.dispatchChangePassword(dataToPasswordChange.value, 1).then(() => {
+  usersStore.dispatchChangePassword(dataToPasswordChange.value, user.value.id).then(() => {
     toast.success('Pomyślnie zmieniono hasło!')
     dataToPasswordChange.value = new InputPasswordChange()
   })
 }
+
+onMounted(() => {
+  // @ts-ignore
+    user.value = jwtStore.getUser()
+
+    console.log(user.value);
+})
 </script>
 
 <template>
@@ -34,14 +43,14 @@ const handleChangePassword = () => {
           lg="6"
         >
           <v-list density="compact" nav>
-            <!-- TODO: Poprawić jak będą dane użytkownika na froncie -->
-            <v-list-item prepend-icon="mdi-pound" title="Identyfikator"> 213 </v-list-item>
 
-            <v-list-item prepend-icon="mdi-account" title="Nazwa"> Dupa </v-list-item>
+            <v-list-item prepend-icon="mdi-pound" title="Identyfikator"> {{ user.id }} </v-list-item>
 
-            <v-list-item prepend-icon="mdi-email" title="Email"> example@123.com </v-list-item>
+            <v-list-item prepend-icon="mdi-account" title="Nazwa"> {{ user.name }} </v-list-item>
 
-            <v-list-item prepend-icon="mdi-tie" title="Rola"> Administrator </v-list-item>
+            <v-list-item prepend-icon="mdi-email" title="Email"> {{ user.email }} </v-list-item>
+
+            <v-list-item prepend-icon="mdi-tie" title="Rola"> {{ jwtStore.getUserRole() }} </v-list-item>
           </v-list>
         </v-card>
       </v-col>

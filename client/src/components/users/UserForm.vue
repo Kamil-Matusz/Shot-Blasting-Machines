@@ -6,7 +6,6 @@ import ValidatedTextField from '../ui/ValidatedTextField.vue';
 import { onMounted, ref } from 'vue';
 import { useRoleStore } from '@/stores/roleStore';
 import type { Role } from '@/models/role';
-import roles from '@/services/roles';
 
 const emit = defineEmits(['onValidSubmit', 'onInvalidSubmit']);
 const user = defineModel<InputCreateUser>({ required: true });
@@ -28,6 +27,12 @@ const submit = async () => {
     emit('onInvalidSubmit');
 }
 
+const selectRole = (item: any) => {
+    for (let i = 0; i < roleStore.roles.length; i++) {
+        if (roleStore.roles[i].name === item) user.value.role = roleStore.roles[i].id;
+    }
+}
+
 onMounted(async () => {
   await roleStore.dispatchGetRoles();
   let tempTab : any[] = [];
@@ -47,13 +52,13 @@ onMounted(async () => {
             variant="outlined"
             label="Rola" class="mb-2"
             :items="roleStore.roles.map((role: Role) => role.name)"
+            @update:modelValue="(item) => selectRole(item)"
         >
-        
         </v-select>
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn type="submit" text="Dodaj" color="primary" variant="flat"></v-btn>
+            <v-btn type="submit" text="Zatwierdź" color="primary" variant="flat"></v-btn>
         </v-card-actions>
     </v-form>
 </template>s

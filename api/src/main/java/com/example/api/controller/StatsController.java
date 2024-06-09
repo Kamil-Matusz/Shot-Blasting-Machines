@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * REST controller for managing orders.
+ * REST controller for getting statistics.
  * <p>
- * Handles HTTP requests related to orders.
+ * Handles HTTP requests related to statistics.
  * </p>
  */
 @RestController

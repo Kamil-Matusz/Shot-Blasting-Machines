@@ -172,7 +172,16 @@ public class OrderController {
         OrderDTO orderDTO = OrderDTO.convertToDTO(order);
         return new ResponseEntity<>(orderDTO, HttpStatus.CREATED);
     }
-
+    /**
+     * Starts the production process for a specific order.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders/{id}/start-production.
+     * </p>
+     *
+     * @param id the ID of the order to start production for
+     * @return ResponseEntity with HTTP status 200 (OK) if successful, 404 (Not Found) if the order does not exist,
+     * or 400 (Bad Request) if the order is not in a valid state to start production or if there are not enough materials
+     */
     @PostMapping("/{id}/start-production")
     public ResponseEntity startProduction(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -196,7 +205,16 @@ public class OrderController {
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /**
+     * Marks an order as ready to be checked.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders/{id}/to-check.
+     * </p>
+     *
+     * @param id the ID of the order to mark as ready to be checked
+     * @return ResponseEntity with HTTP status 200 (OK) if successful, 404 (Not Found) if the order does not exist,
+     * or 400 (Bad Request) if the order is not in a valid state to be marked as ready to be checked
+     */
     @PostMapping("/{id}/to-check")
     public ResponseEntity markAsReadyToCheck(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -214,7 +232,16 @@ public class OrderController {
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /**
+     * Marks an order as sent to the client.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders/{id}/send-to-client.
+     * </p>
+     *
+     * @param id the ID of the order to mark as sent to the client
+     * @return ResponseEntity with HTTP status 200 (OK) if successful, 404 (Not Found) if the order does not exist,
+     * or 400 (Bad Request) if the order is not in a valid state to be marked as sent to the client
+     */
     @PostMapping("/{id}/send-to-client")
     public ResponseEntity sendToClient(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -232,7 +259,16 @@ public class OrderController {
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /**
+     * Confirms the quality of an order.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders/{id}/quality-confirm.
+     * </p>
+     *
+     * @param id the ID of the order to confirm quality for
+     * @return ResponseEntity with HTTP status 200 (OK) if successful, 404 (Not Found) if the order does not exist,
+     * or 400 (Bad Request) if the order is not in a valid state to be confirmed for quality
+     */
     @PostMapping("/{id}/quality-confirm")
     public ResponseEntity qualityConfirm(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -250,7 +286,16 @@ public class OrderController {
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /**
+     * Declines the quality of an order.
+     * <p>
+     * Mapped to HTTP POST requests for /api/orders/{id}/quality-decline.
+     * </p>
+     *
+     * @param id the ID of the order to decline quality for
+     * @return ResponseEntity with HTTP status 200 (OK) if successful, 404 (Not Found) if the order does not exist,
+     * or 400 (Bad Request) if the order is not in a valid state to be declined for quality
+     */
     @PostMapping("/{id}/quality-decline")
     public ResponseEntity qualityDecline(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -269,7 +314,16 @@ public class OrderController {
         orderRepository.save(order);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /**
+     * Retrieves the PDF summary of a specific order.
+     * <p>
+     * Mapped to HTTP GET requests for /api/orders/{id}/summary.
+     * </p>
+     *
+     * @param id the ID of the order to retrieve the summary for
+     * @return ResponseEntity containing the PDF summary as a byte array and HTTP status 200 (OK),
+     * or HTTP status 404 (Not Found) if the order or summary does not exist
+     */
     @GetMapping("/{id}/summary")
     public ResponseEntity<byte[]> getBlobSummary(@PathVariable Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
@@ -281,6 +335,12 @@ public class OrderController {
         }
     }
 
+    /**
+     * Decreases the amount of materials needed for production.
+     *
+     * @param neededMaterials the list of needed materials
+     * @return true if materials were successfully decreased, false if there are not enough materials
+     */
     public boolean decreaseMaterials(List<NeededMaterials> neededMaterials) {
         for (NeededMaterials neededMaterial : neededMaterials) {
             Material material = neededMaterial.getMaterial();

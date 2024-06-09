@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { API } from "../services";
-import { type Model, InputCreateModel } from '@/models/model';
+import { type Model, InputCreateModel, InputEditModel } from '@/models/model';
+import type { PaginationParams } from "@/models/paginationParams";
 
 export const useModelStore = defineStore("modelStore", () => {
   const models = ref<Model[]>([]);
+  const totalItems = ref(0);
 
   //Store private functions that operates on local array to update it after api operations alternatily you can reload whole array with dispatchGetMaterials
 
@@ -31,12 +33,20 @@ export const useModelStore = defineStore("modelStore", () => {
 
   //Functions that operates on api
 
-  async function dispatchGetModels() {
-    const { data } = await API.models.getModels();
-    models.value = data;
+  async function dispatchGetModels(pagination: PaginationParams) {
+    const { data } = await API.models.getPaginatedModels(pagination);
+    // @ts-ignore
+    models.value = data.content;
+    // @ts-ignore
+    totalItems.value = data.totalElements;
   }
 
-  async function dispatchCreateModel(input:InputCreateModel) {
+  // async function dispatchGetModels() {
+  //   const { data } = await API.models.getModels();
+  //   models.value = data;
+  // }
+
+  async function dispatchCreateModel(input:InputEditModel) {
     const { data } = await API.models.createModel(input);
     addNewModel(data);
   }
@@ -46,10 +56,18 @@ export const useModelStore = defineStore("modelStore", () => {
     removeModel(id);
   }
 
+  async function dispatchUpdateModel(id:number, updatedModel:InputEditModel) {
+      const { data } = await API.models.updateModel(id, updatedModel);
+      updateModel(data);
+  }
+  
+
   return {
     models,
+    totalItems,
     dispatchCreateModel,
     dispatchGetModels,
-    dispatchDeleteModel
+    dispatchDeleteModel,
+    dispatchUpdateModel
   };
 });

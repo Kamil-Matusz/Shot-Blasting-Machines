@@ -5,6 +5,13 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a user entity.
+ * <p>
+ * User represents an individual user within the system, with associated information
+ * such as name, email, password, and role.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="users")

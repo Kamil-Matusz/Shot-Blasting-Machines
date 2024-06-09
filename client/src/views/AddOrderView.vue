@@ -1,39 +1,149 @@
 <script setup lang="ts">
-import BasePage from '@/components/pages/BasePage.vue';
-import { ref } from 'vue';
+import BasePage from '@/components/pages/BasePage.vue'
+import { useClientsStore } from '@/stores/clientStore'
+import { onMounted, ref } from 'vue'
+import { type Client, InputCreateClient } from '@/models/client'
+import { useModelStore } from '@/stores/modelStore'
+import { useAccessoryStore } from '@/stores/accessoryStore'
+import type { Model } from '@/models/model'
+import { InputCreateOrder } from '@/models/order'
+import type { Accessory } from '@/models/accessory'
+import { useOrderStore } from '@/stores/orderStore'
+import { InputPagination } from '@/models/paginationParams'
+import { useToast } from 'vue-toastification'
+import BaseCardWithHover from '@/components/cards/BaseCardWithHover.vue'
+import ClientForm from '@/components/client/ClientForm.vue';
+import users from '@/services/users'
+import { useJwtStore } from '@/stores/jwtStore'
+import router from '@/router'
 
-const isLoading = ref(false);
-const isActive = ref(false);
-const isSaved = ref(false);
-const isClientSelected = ref(false);
+const clientStore = useClientsStore()
+const modelStore = useModelStore()
+const accessoryStore = useAccessoryStore()
+const orderStore = useOrderStore()
+const toast = useToast()
+const jwtStore = useJwtStore()
 
-function confirm() {
-  isLoading.value = true;
+const user = ref({} as User)
+const clientToAdd = ref(new InputCreateClient())
 
-  setTimeout(() => {
-    isLoading.value = false;  
-    isSaved.value = true;
-  }, 2000);
+const isClientSelected = ref(false)
+
+const selectedClient = ref({} as Client)
+const selectedModel = ref({} as Model)
+
+const newOrderToSave = ref(new InputCreateOrder() as InputCreateOrder)
+
+const price = ref(0 as number)
+
+const confirmClientSelect = () => {
+  if (selectedClient.value.id) {
+    isClientSelected.value = true
+    newOrderToSave.value.client = selectedClient.value.id
+    getModels()
+    getAccessories()
+  }
+  else {
+    toast.error("Najpierw wybierz klienta!");
+  }
 }
 
-const select = () => {
-  isClientSelected.value = true
+const selectClient = (value: string) => {
+  let splitted = value.split('   ')
+
+  clientStore.clients.forEach((client: Client) => {
+    if (splitted[0] == client.name && splitted[1].slice(1, -1) == client.address) {
+      selectedClient.value = client
+    }
+  })
 }
+
+const changeCheckbox = (checkValue: boolean, accessoryId: number) => {
+  let tempAccessory: Accessory = { id: 0, name: '', price: 0 }
+
+  accessoryStore.accessories.forEach((a: Accessory) => {
+    if (a.id === accessoryId) tempAccessory = a
+  })
+
+  if (checkValue) {
+    price.value += tempAccessory.price
+    newOrderToSave.value.accessories.push(tempAccessory.id)
+  } else {
+    price.value -= tempAccessory.price
+    const index = newOrderToSave.value.accessories.indexOf(tempAccessory.id)
+    newOrderToSave.value.accessories.splice(index, 1)
+  }
+}
+
+const selectModel = (value: string) => {
+  if (selectedModel.value.price) {
+    price.value -= selectedModel.value.price
+  }
+
+  let splitted = value.split('  ')
+  modelStore.models.forEach((model: Model) => {
+    if (splitted[0] == model.name && splitted[1].slice(1, -5) == model.price.toString()) {
+      selectedModel.value = model
+      price.value += model.price
+      newOrderToSave.value.model = selectedModel.value.id
+    }
+  })
+}
+
+const getClients = () => {
+  clientStore.dispatchGetClients()
+}
+
+const getModels = () => {
+  let pagination = new InputPagination()
+  pagination.page = 0
+  pagination.size = 100
+  modelStore.dispatchGetModels(pagination)
+}
+
+const getAccessories = () => {
+  accessoryStore.dispatchGetAccesories()
+}
+
+const addClient = async () => {
+  await clientStore.dispatchCreateClient(clientToAdd.value)
+  .then(() => {
+    toast.success("Pomyślnie dodano nowego klienta!");
+    clientToAdd.value = new InputCreateClient();
+  })
+  };
+
+
+const saveOrder = () => {
+  if (newOrderToSave.value.model !== 0) {
+    newOrderToSave.value.price = price.value
+    newOrderToSave.value.date = new Date().toISOString().slice(0, 19).replace('T', ' ').toString()
+
+    newOrderToSave.value.user = user.value.id;
+
+    console.log(newOrderToSave.value)
+
+    orderStore.dispatchCreateOrder(newOrderToSave.value).then(() => {
+      toast.success('Pomyślnie dodano nowe zamówienia!')
+      router.push('/orders')
+    })
+  }
+  else {
+    toast.error("Najpierw wybierz model maszyny!")
+  }
+}
+
+onMounted(() => {
+  getClients()
+  user.value = jwtStore.getUser()
+})
 </script>
 
-
 <template>
-
-
-<template v-if="isClientSelected">
-  <BasePage title="Dodaj zamówienie">
-
-    <v-card class="mb-5"
-          variant="outlined"
-          title="Klient"
-        >
-
-        <v-table class="ml-4 mr-4">
+  <template v-if="isClientSelected">
+    <BasePage title="Dodaj zamówienie">
+      <BaseCardWithHover class="mb-5" variant="outlined" title="Klient">
+        <v-table class="ml-4 mr-4 mb-4">
           <thead>
             <tr>
               <th>ID</th>
@@ -45,165 +155,109 @@ const select = () => {
           </thead>
           <tbody>
             <tr>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
+              <td>{{ selectedClient.id }}</td>
+              <td>{{ selectedClient.name }}</td>
+              <td>{{ selectedClient.email }}</td>
+              <td>{{ selectedClient.phoneNumber }}</td>
+              <td>{{ selectedClient.address }}</td>
             </tr>
           </tbody>
         </v-table>
-      
-  </v-card>
+      </BaseCardWithHover>
 
-    <v-card class="mb-5"
-      title="Koszt"
-      subtitle="Poniżej znajduje się przybliżona wartość zamówienia."
-      variant="outlined"
-    >
-      <h1 class="mb-4 text-center">
-        0 PLN
-      </h1>
-    </v-card>
-    <v-row>
-      <v-col cols="12" lg="6">
-        <v-card class="mb-5"
-          variant="outlined"
-          title="Śrutownica"
-          subtitle="Wybierz z listy rowijanej maszynę, którą chce zamówić klient."
-        >
-          <v-select
-            class="ml-4 mr-4"
-            :items="['Śrutownica RB7 (12900 PLN)', 'Śrutownica RB11 (15500 PLN)']"
-            label="Wybierz maszynę:"
-          />
-        </v-card>
+      <BaseCardWithHover
+        class="mb-5"
+        title="Koszt"
+        subtitle="Poniżej znajduje się przybliżona wartość zamówienia."
+        variant="outlined"
+      >
+        <h1 class="mb-4 text-center">{{ price }} PLN</h1>
+      </BaseCardWithHover>
+      <v-row>
+        <v-col cols="12" lg="6">
+          <BaseCardWithHover
+            class="mb-5"
+            variant="outlined"
+            title="Śrutownica"
+            subtitle="Wybierz z listy rowijanej model maszyny, który chce zamówić klient."
+          >
+            <v-select
+              class="ml-4 mr-4"
+              variant="outlined"
+              :items="
+                modelStore.models.map((model: Model) => model.name + '  (' + model.price + ' PLN)')
+              "
+              @update:modelValue="selectModel"
+            />
+          </BaseCardWithHover>
 
-        <v-card
-          variant="outlined"
-          title="Personalizacja"
-          subtitle="Wybierz elementy, które życzy sobie klient."
-        >
-          <v-checkbox class="ml-3"
-            hide-details
-            label="Hak holowniczy (+ 500 PLN)"
-            color="primary"
-          />
-          <v-checkbox class="ml-3"
-            label="System odsysania pyłów (+ 3500 PLN)"
-            color="primary"
-            hide-details
-          />
-          <v-checkbox class="ml-3"
-            label="Dodatkowy zestaw kół (+ 1000 PLN)"
-            color="primary"
-            hide-details
-          />
-        </v-card>
+          <BaseCardWithHover
+            variant="outlined"
+            title="Personalizacja"
+            subtitle="Wybierz elementy, które życzy sobie klient."
+          >
+            <v-checkbox
+              class="ml-3"
+              v-for="accessory in accessoryStore.accessories"
+              hide-details
+              :label="accessory.name + ' (+ ' + accessory.price + ' PLN)'"
+              color="primary"
+              :key="accessory.id"
+              @change="(event: any) => changeCheckbox(event.srcElement.checked, accessory.id)"
+            />
+          </BaseCardWithHover>
+        </v-col>
+        <v-col cols="12" lg="6">
+          <BaseCardWithHover
+            class="mb-5"
+            title="Uwagi"
+            subtitle="Zapytaj klienta o dodatkowe uwagi."
+            variant="outlined"
+          >
+            <v-textarea class="ml-4 mr-4" v-model="newOrderToSave.comments" clearable />
+          </BaseCardWithHover>
+          <BaseCardWithHover
+            title="Podsumowanie"
+            subtitle="Przedstaw klientowi wszystkie ustawienia i zapisz zamówienie."
+            variant="outlined"
+            class="pb-1"
+          >
+            <p class="mb-2">
+              Jeżeli klient potwierdza złożenia zamówienia, zapisz je w bazie danych.
+            </p>
 
-      </v-col>
-      <v-col cols="12" lg="6">
-        <v-card class="mb-5"
-          title="Uwagi"
-          subtitle="Zapytaj klienta o dodatkowe uwagi."
-          variant="outlined"
-        >
-          <v-textarea class="ml-4 mr-4"
-            clearable
-          />
-        </v-card>
-        <v-card
-          title="Podsumowanie"
-          subtitle="Przedstaw klientowi wszystkie ustawiania i zapisz zamówienie."
-          variant="outlined"
-        >
-          <p class="ml-4 mr-4">Jeżeli klient potwierdza złożenia zamówienia, zapisz je w bazie danych.</p>
-          
-          <v-dialog max-width="500" v-model="isActive">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-row>
-              <v-btn color="primary" class="ma-5" v-bind="activatorProps" text="Zapisz zamówienie" variant="flat"></v-btn>
-            </v-row>
-          </template>
+            <v-btn
+              color="primary"
+              text="Zapisz zamówienie"
+              @click="saveOrder"
+              variant="flat"
+            ></v-btn>
+          </BaseCardWithHover>
+        </v-col>
+      </v-row>
+    </BasePage>
+  </template>
 
-          <template v-slot:default>
-            <template v-if="isLoading">
-              <v-card>
-                <v-card-text class="ma-5">
-                  <v-row class="align-center justify-space-between">
-                    Zapisuję zamówienie
-                    <v-progress-circular indeterminate color="blue"></v-progress-circular>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </template>
-            <template v-else-if="isSaved">
-              <v-card title="Sukces">
-                <v-card-text class="ma-5">
-                  Zamówienie zostało poprawnie zapisane
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn text="Powrót" @click="isActive = false; isSaved = false"></v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-            <template v-else>
-              <v-card title="Potwierdź">
-                <v-card-text>
-                  Czy na pewno chcesz zapisać to zamówienie?
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" class="ma-3" text="Zapisz" variant="flat" @click="confirm"></v-btn>
-                  <v-btn text="Anuluj" @click="isActive = false"></v-btn>
-                </v-card-actions>
-              </v-card>
-            </template>
-
-          </template>
-        </v-dialog>
-
-
-        </v-card>
-      </v-col>
-    </v-row>
-  </BasePage>
-</template>
-
-<template v-else>
-<BasePage title="Wybierz klienta">
-
-  <v-card class="mb-5"
-          variant="outlined"
-          title="Klient"
-          subtitle="Wybierz klienta z listy."
-        >
-
-        <v-text-field
-          list="clients-list"
+  <template v-else>
+    <BasePage title="Wybierz klienta">
+      <BaseCardWithHover class="mb-5" variant="outlined" title="Klient" subtitle="Wybierz klienta z listy.">
+        <v-select
           class="ml-4 mr-4"
-        ></v-text-field>
-      
-        <datalist id="clients-list">
-          <option value="Agatha Jenkins"></option>
-          <option value="Adam Jenkins"></option>
-          <option value="Jan Kowalski"></option>
-          <option value="Andrzej Miś"></option>
-          <option value="Adrian Busz"></option>
-        </datalist>
-      
-  </v-card>
-
-  <v-card class="mb-5"
           variant="outlined"
-          title="Informacje o kliencie"
-          subtitle="Przed potwierdzeniem zapytaj klienta, czy dane w bazie są poprawne."
-        >
+          :items="
+            clientStore.clients.map((client: Client) => client.name + '   (' + client.address + ')')
+          "
+          @update:modelValue="selectClient"
+        ></v-select>
+      </BaseCardWithHover>
 
-        <v-table class="ml-4 mr-4">
+      <BaseCardWithHover
+        class="mb-5"
+        variant="outlined"
+        title="Informacje o kliencie"
+        subtitle="Przed potwierdzeniem zapytaj klienta, czy dane w bazie są poprawne."
+      >
+        <v-table class="ml-4 mr-4 mb-4">
           <thead>
             <tr>
               <th>ID</th>
@@ -215,52 +269,46 @@ const select = () => {
           </thead>
           <tbody>
             <tr>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
-              <td>null</td>
+              <td>{{ selectedClient.id }}</td>
+              <td>{{ selectedClient.name }}</td>
+              <td>{{ selectedClient.email }}</td>
+              <td>{{ selectedClient.phoneNumber }}</td>
+              <td>{{ selectedClient.address }}</td>
             </tr>
           </tbody>
         </v-table>
-      
-  </v-card>
+      </BaseCardWithHover>
 
-  <v-row>
-    <v-col cols="12" lg="6">
-      <v-card
-          variant="outlined"
-          title="Rejestracja klienta"
-          subtitle="Jeśli klienta jeszcze nie ma w bazie danych możesz go dodać."
-        >
-          <v-btn
-            class="ma-3"
-            color="primary"
+      <v-row>
+        <v-col cols="12" lg="6">
+          <BaseCardWithHover
+            variant="outlined"
+            title="Rejestracja klienta"
+            subtitle="Jeśli klienta jeszcze nie ma w bazie danych możesz go dodać."
           >
-            Dodaj klienta do bazy
-          </v-btn>
-        </v-card>
-    </v-col>
+          <v-dialog max-width="500">
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn v-bind="activatorProps" color="primary" variant="flat" style="max-width: 20rem;">Dodaj klienta do bazy</v-btn>
+            </template>
+            <template v-slot:default="{ isActive }">
+              <v-card title="Nowy klient" rounded="lg">
+                <ClientForm v-model="clientToAdd" @on-valid-submit="addClient(), isActive.value = false"></ClientForm>
+              </v-card>
+            </template>
+          </v-dialog>
+          </BaseCardWithHover>
+        </v-col>
 
-    <v-col cols="12" lg="6">
-      <v-card
-          variant="outlined"
-          title="Potwierdzenie"
-          subtitle="Potwierdź wybór i przejdź do ekranu zamówienia."
-        >
-          <v-btn
-            class="ma-3"
-            color="primary"
-            @click="select"
+        <v-col cols="12" lg="6">
+          <BaseCardWithHover
+            variant="outlined"
+            title="Potwierdzenie"
+            subtitle="Potwierdź wybór i przejdź do ekranu zamówienia."
           >
-            Potwierdź
-          </v-btn>
-        </v-card>
-    </v-col>
-  </v-row>
-  
-
-</BasePage>
-</template>
-
+            <v-btn color="primary" @click="confirmClientSelect"> Potwierdź </v-btn>
+          </BaseCardWithHover>
+        </v-col>
+      </v-row>
+    </BasePage>
+  </template>
 </template>

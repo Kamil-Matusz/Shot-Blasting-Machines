@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Security configuration class for setting up security policies and authentication.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
@@ -25,18 +28,26 @@ public class SecurityConfig {
     private final JWTAuthFilter jwtAuthFilter;
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http the HttpSecurity object to configure.
+     * @return the configured SecurityFilterChain.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/models/**")
-                .permitAll()
-                .requestMatchers("/api/materials/**")
-                .permitAll()
-                .requestMatchers("/login/**", "/register/**")
-                .permitAll()
-                .requestMatchers("/api/accesories/**").hasAnyAuthority("Administrator Systemu")
+                .requestMatchers("/api/models/**").hasAnyAuthority("Administrator Systemu", "Sprzedawca", "Konstruktor Maszyn")
+                .requestMatchers("/api/materials/**").hasAnyAuthority("Administrator Systemu", "Konstruktor Maszyn", "Nadzorca Magazynu")
+                .requestMatchers("api/login/**", "/register/**").permitAll()
+                .requestMatchers("/api/accesories/**").hasAnyAuthority("Administrator Systemu", "Sprzedawca")
+                .requestMatchers("/api/users/**").permitAll()
+                .requestMatchers("/api/roles/**").hasAnyAuthority("Administrator Systemu")
+                .requestMatchers("/api/clients/**").hasAnyAuthority("Administrator Systemu", "Sprzedawca")
+                .requestMatchers("/api/orders/**").hasAnyAuthority("Administrator Systemu", "Sprzedawca", "Pracownik Produkcji")
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -48,6 +59,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures the authentication provider.
+     *
+     * @return the configured AuthenticationProvider.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -56,11 +72,23 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
+    /**
+     * Configures the password encoder.
+     *
+     * @return the PasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
+    /**
+     * Configures the authentication manager.
+     *
+     * @param config the AuthenticationConfiguration.
+     * @return the configured AuthenticationManager.
+     * @throws Exception if an error occurs during configuration.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

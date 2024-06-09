@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a machine entity.
+ * <p>
+ * A machine is a device that uses power to apply forces and control movement to perform an intended action.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="machines")
@@ -20,8 +26,8 @@ public class Machine {
 
     @ManyToMany
     @JoinTable(
-            name="machines_accesories",
+            name="machines_accessories",
             joinColumns = @JoinColumn(name = "machine_id"),
-            inverseJoinColumns = @JoinColumn(name = "accesory_id"))
-    private List<Accesory> accessories;
+            inverseJoinColumns = @JoinColumn(name = "accessory_id"))
+    private List<Accessory> accessories;
 }

@@ -1,5 +1,6 @@
 package com.example.api.config;
 
+import com.example.api.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,9 @@ import java.io.IOException;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+/**
+ * Filter that validates the JWT token for authentication on every request.
+ */
 @Component
 @RequiredArgsConstructor
 public class JWTAuthFilter extends OncePerRequestFilter {
@@ -23,6 +27,15 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
     private final JWTUtils jwtUtils;
 
+    /**
+     * Filters incoming requests and checks for a valid JWT token in the Authorization header.
+     *
+     * @param request     the HTTP request
+     * @param response    the HTTP response
+     * @param filterChain the filter chain
+     * @throws ServletException if an error occurs during filtering
+     * @throws IOException      if an input or output error is detected
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -37,7 +50,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         jwtToken = authHeader.substring(7);
         userEmail = jwtUtils.extractUsername(jwtToken);
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+            CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
             if (jwtUtils.isTokenValid(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

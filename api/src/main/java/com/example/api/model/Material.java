@@ -1,10 +1,18 @@
 package com.example.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Represents a material entity.
+ * <p>
+ * A material is a substance that occurs naturally in the Earth's crust or can be synthesized.
+ * </p>
+ */
 @Entity
 @Data
 @Table(name="materials")
@@ -22,6 +30,7 @@ public class Material {
     @Column(name="amount", nullable = false)
     private Integer amount;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
     private List<NeededMaterials> neededMaterials;
 }

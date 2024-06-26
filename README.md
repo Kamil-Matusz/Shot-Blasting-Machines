@@ -92,3 +92,4 @@ Dzięki zastosowaniu narzędzia Electron aplikacja będzie uruchamiać się jako
 - Gitlab
 - Jira
 - Intellij
+

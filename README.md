@@ -25,8 +25,8 @@ Dzięki zastosowaniu narzędzia Electron aplikacja będzie uruchamiać się jako
 ## Wymagania niefunkcjonalne
 - Aplikacja nawiązuje połączenie z bazą danych i używa rekordów w niej zapisanych
 - Możliwość dodawania, usuwania oraz edycji rekordów w bazie z poziomu pracownika
-- Aplikacja tworzona jest w języku Java z frameworkiem Spring Boot.
-
+- Aplikacja tworzona jest w języku Java z frameworkiem Spring Boot
+- 
 ## Diagram przypadków użycia
 ![](/assets/DPU.png)
 

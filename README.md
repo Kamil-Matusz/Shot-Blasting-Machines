@@ -85,7 +85,7 @@ Dzięki zastosowaniu narzędzia Electron aplikacja będzie uruchamiać się jako
 - Electron
 - Java
 - Spring Boot
-- MySQL
+- MySQL  
 - Hibernate
 - TypeScript
 - Vue.js
